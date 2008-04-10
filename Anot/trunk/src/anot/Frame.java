@@ -9,6 +9,6 @@ package anot;
 public class Frame {
 
     public static void main(String[] args) {
-        System.out.println ("SVN-test");
+        System.out.println ("SVN-test"); // comment
     }
 }
