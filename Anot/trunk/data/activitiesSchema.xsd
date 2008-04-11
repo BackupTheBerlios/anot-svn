@@ -4,5 +4,5 @@
             targetNamespace="http://anot.berlios.de/schema/activitiesSchema"
             xmlns:tns="http://anot.berlios.de/schema/activitiesSchema"
             elementFormDefault="qualified">
-
+    
 </xsd:schema>

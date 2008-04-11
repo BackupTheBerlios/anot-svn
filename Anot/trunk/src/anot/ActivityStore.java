@@ -43,12 +43,4 @@ public class ActivityStore {
     public Iterator<Activity> iterator() {
         return activities.iterator();
     }
-
-    public void saveToXml() {
-
-    }
-
-    public static ActivityStore loadFromXml(String filename) {
-        return null;
-    }
 }
