@@ -2,6 +2,7 @@
  */
 package anot;
 
+import java.awt.event.*;
 import java.util.*;
 
 /**
@@ -11,26 +12,42 @@ import java.util.*;
 public class ActivityStore {
 
     LinkedList<Activity> activities;
-    
+    LinkedList<ActionListener> listeners;
+    Comparator<Activity> comparator;
+
     public ActivityStore() {
+        activities = new LinkedList<Activity>();
+        listeners = new LinkedList<ActionListener>();
+        comparator = null;
     }
-    
-    public ActivityStore(String filename) {
-        
+
+    protected void notifyListeners() {
+        ActionEvent ae = new ActionEvent(this, -1, "Activities Modified");
+        for (ActionListener al : listeners) {
+            al.actionPerformed(ae);
+        }
     }
-    
-    public void sortActivites() {
-        
+
+    public void sortActivites(Comparator<Activity> comparator) {
+        this.comparator = comparator;
+        Collections.sort(activities, comparator);
+        notifyListeners();
     }
-    
+
     public void addActivity(Activity a) {
-        activities.addLast(a);
+        activities.addFirst(a);
+        Collections.sort(activities, comparator);
+        notifyListeners();
     }
     
+    public Iterator<Activity> iterator() {
+        return activities.iterator();
+    }
+
     public void saveToXml() {
-        
+
     }
-    
+
     public static ActivityStore loadFromXml(String filename) {
         return null;
     }

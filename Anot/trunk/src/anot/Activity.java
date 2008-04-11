@@ -12,12 +12,11 @@ public class Activity {
 
     private String title;
     private String description;
+    private String subject;
     private Date date;
 
     public Activity() {
     }
-    
-    
 
     public String getTitle() {
         return title;
@@ -42,6 +41,12 @@ public class Activity {
     public void setDate(Date date) {
         this.date = date;
     }
-    
-    
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 }
