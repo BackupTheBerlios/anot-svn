@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : activities.xml
+    Created on : April 11, 2008, 7:23 PM
+    Author     : tgwizard
+    Description:
+        Purpose of the document follows.
+-->
+
+<activity-store  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                 xmlns='http://anot.berlios.de/schema/activitiesSchema'
+                 xsi:schemaLocation='http://anot.berlios.de/schema/activitiesSchema activitiesSchema.xsd'>
+    <activity title="Assign" subject="General">
+        <date>2008-04-11T21:36:23+02:00</date>
+        <description>This is a description</description>
+    </activity>
+    <activity title="Assign2" subject="General">
+        <date>2007-01-22T00:30:00+02:00</date>
+        <description>Bajs</description>
+    </activity>
+    <activity title="INDA" subject="Programming">
+        <date>1995-11-03T10:20:00+02:00</date>
+        <description>Introduktion till datalogi</description>
+    </activity>
+</activity-store>

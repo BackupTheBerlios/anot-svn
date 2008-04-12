@@ -30,16 +30,20 @@ public class ActivityStore {
 
     public void sortActivites(Comparator<Activity> comparator) {
         this.comparator = comparator;
-        Collections.sort(activities, comparator);
+        if (comparator != null) {
+            Collections.sort(activities, comparator);
+        }
         notifyListeners();
     }
 
     public void addActivity(Activity a) {
         activities.addFirst(a);
-        Collections.sort(activities, comparator);
+        if (comparator != null) {
+            Collections.sort(activities, comparator);
+        }
         notifyListeners();
     }
-    
+
     public Iterator<Activity> iterator() {
         return activities.iterator();
     }

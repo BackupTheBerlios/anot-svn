@@ -4,5 +4,19 @@
             targetNamespace="http://anot.berlios.de/schema/activitiesSchema"
             xmlns:tns="http://anot.berlios.de/schema/activitiesSchema"
             elementFormDefault="qualified">
-    
+    <xsd:element name="activity-store">
+        <xsd:complexType>
+            <xsd:choice maxOccurs="unbounded" minOccurs="0">
+                <xsd:element name="activity" type="tns:activityType"></xsd:element>
+            </xsd:choice>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="activityType">
+        <xsd:choice maxOccurs="unbounded">
+            <xsd:element name="description" type="xsd:string"></xsd:element>
+            <xsd:element name="date" type="xsd:dateTime"></xsd:element>
+        </xsd:choice>
+        <xsd:attribute name="title" type="xsd:string" use="required"/>
+        <xsd:attribute name="subject" type="xsd:string" use="required"/>
+    </xsd:complexType>
 </xsd:schema>

@@ -16,10 +16,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.text.ParseException;
 import org.w3c.dom.*;
 
-import java.util.jar.*;
-import java.util.zip.*;
+import java.text.SimpleDateFormat;
+
 import java.util.*;
 
 /**
@@ -28,12 +29,16 @@ import java.util.*;
  */
 public class ActivityStoreBuilder {
 
+    private static SimpleDateFormat simpleDateFormat =
+            new SimpleDateFormat("yyyy-mm-dd'T'hh:mm:ss");
+    
+    
     public static ActivityStore loadActivityStoreFromFile(String filename) {
         ActivityStore as = null;
         Document document = null;
         try {
             document = openXMLDocument(new FileInputStream(new File(filename)),
-                    new StreamSource(ClassLoader.getSystemResourceAsStream("data/activitiesSchema.xsd")));
+                    new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
         } catch (Exception e) {
             System.err.println("Exception in FileInputStream stuff");
             System.err.println(e);
@@ -48,7 +53,7 @@ public class ActivityStoreBuilder {
     public static ActivityStore loadActivityStoreFromJar(String filename) {
         ActivityStore as = null;
         Document document = openXMLDocument(ClassLoader.getSystemResourceAsStream(filename),
-                new StreamSource(ClassLoader.getSystemResourceAsStream("data/activitiesSchema.xsd")));
+                new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
         if (document != null) {
             as = getActivityStore(document);
         }
@@ -56,7 +61,58 @@ public class ActivityStoreBuilder {
     }
 
     protected static ActivityStore getActivityStore(Document document) {
-        return null;
+
+        ActivityStore as = new ActivityStore();
+        NodeList nodes = document.getElementsByTagName("activity");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Activity activity = getActivity(nodes.item(i));
+            if (activity != null) {
+                as.addActivity(activity);
+            }
+        }
+        return as;
+    }
+
+    protected static Activity getActivity(Node node) {
+        Activity activity = null;
+        if (node.hasChildNodes()) {
+            String title = node.getAttributes().getNamedItem("title").
+                    getTextContent();
+
+            String subject = node.getAttributes().getNamedItem("subject").
+                    getTextContent();
+
+            activity = new Activity(title);
+            activity.setSubject(subject);
+            Node child = node.getFirstChild();
+            do {
+                if (child.getNodeName().equals("date")) {
+                    String dateString = child.getTextContent();
+                    try {
+                        activity.setDate(simpleDateFormat.parse(dateString));
+                    } catch (ParseException pe) {
+                        System.err.println("Got a parse exception when parsing a date");
+                        System.err.println(pe);
+                    }
+                } else if (child.getNodeName().equals("description")) {
+                    activity.setDescription(parseRichText(child.getTextContent()));
+                }
+            } while ((child = child.getNextSibling()) != null);
+        }
+        return activity;
+    }
+
+    public static String parseRichText(String text) {
+        Scanner tokenizer = new Scanner(text.trim().replace("\n", "<br/>"));
+        StringBuilder builder = new StringBuilder();
+        while (tokenizer.hasNext()) {
+            builder.append(tokenizer.next());
+            builder.append(" ");
+        }
+        String ret = builder.toString();
+        ret = ret.replace("<br/> ", "\n");
+        ret = ret.trim();
+        return ret;
     }
 
     /**

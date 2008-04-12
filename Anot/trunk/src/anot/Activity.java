@@ -15,7 +15,8 @@ public class Activity {
     private String subject;
     private Date date;
 
-    public Activity() {
+    public Activity(String title) {
+        this.title = title;
     }
 
     public String getTitle() {
@@ -48,5 +49,9 @@ public class Activity {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+    
+    public String toString() {
+        return "(" + title + ":" + date + ":" + subject + ")";
     }
 }
