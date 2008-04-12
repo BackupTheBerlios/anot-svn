@@ -2,36 +2,26 @@
  */
 package anot;
 
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.*;
-import javax.xml.transform.TransformerException;
-import javax.xml.validation.*;
+import javax.xml.stream.*;
 import javax.xml.transform.stream.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.stream.*;
+import javax.xml.validation.*;
+
+import org.w3c.dom.*;
+import org.w3c.dom.ls.*;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.text.ParseException;
-import org.w3c.dom.*;
-import org.w3c.dom.ls.*;
-
 import java.text.SimpleDateFormat;
 
 import java.util.*;
-
 
 /**
  * 
@@ -47,7 +37,7 @@ public class ActivityStoreBuilder {
         Document document = null;
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream(new File(filename));
+            fis = new FileInputStream(filename);
             document = openXMLDocument(new BufferedInputStream(fis),
                     new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
         } catch (Exception e) {
@@ -221,19 +211,27 @@ public class ActivityStoreBuilder {
         return document;
     }
 
+    /**
+     * Writes the <code>as</code> as an xmlfile to disk, specified by
+     * <code>filename</code>.
+     * @param as The ActivityStore to save.
+     * @param filename The relative path to the file to save to.
+     */
     public static void saveActivityStoreToFile(ActivityStore as, String filename) {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(filename);
-            writeXMLDocument(as, fos);
+            writeXMLDocument(as, new BufferedOutputStream(fos));
         } catch (FileNotFoundException ex) {
             System.err.println("Exception in FileOutputStream stuff");
             System.err.println(ex);
         } finally {
-            try {
-                fos.close();
-            } catch (IOException ex) {
-            // nothing
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException ex) {
+                // nothing
+                }
             }
         }
     }
@@ -254,10 +252,11 @@ public class ActivityStoreBuilder {
             DOMImplementation impl = builder.getDOMImplementation();
             Document document = impl.createDocument("http://anot.berlios.de/schema/activitiesSchema",
                     "activity-store", null);
+
             Element rootElement = document.getDocumentElement();
-            rootElement.setAttribute("xmlns:xsi", 
+            rootElement.setAttribute("xmlns:xsi",
                     "http://www.w3.org/2001/XMLSchema-instance");
-            rootElement.setAttribute("xsi:schemaLocation", 
+            rootElement.setAttribute("xsi:schemaLocation",
                     "http://anot.berlios.de/schema/activitiesSchema activitiesSchema.xsd");
 
             Iterator<Activity> i = as.iterator();
@@ -266,7 +265,7 @@ public class ActivityStoreBuilder {
             }
 
             // this is so stupid
-            
+
             // Prepare the DOM document for writing
             Source source = new DOMSource(document);
             Result result = new StreamResult(new OutputStreamWriter(os));
@@ -295,14 +294,13 @@ public class ActivityStoreBuilder {
         activityElement.setAttribute("title", activity.getTitle());
         activityElement.setAttribute("subject", activity.getSubject());
         document.getDocumentElement().appendChild(activityElement);
-        
+
         Element dateElement = document.createElement("date");
         dateElement.setTextContent(simpleDateFormat.format(activity.getDate()));
         activityElement.appendChild(dateElement);
-        
+
         Element descriptionElement = document.createElement("description");
         descriptionElement.setTextContent(activity.getDescription());
         activityElement.appendChild(descriptionElement);
     }
-
 }

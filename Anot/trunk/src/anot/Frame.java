@@ -11,23 +11,16 @@ import java.util.*;
 public class Frame {
 
     public static void main(String[] args) {
-        System.out.println ("SVN-test"); // testing again 2
         ActivityStore as = ActivityStoreBuilder.loadActivityStoreFromJar("activities.xml");
         
-        Iterator<Activity> i = as.iterator();
-        
-        while (i.hasNext()) {
-            System.out.println (i.next());
-        }
+        System.out.println(as);
         
         ActivityStoreBuilder.saveActivityStoreToFile(as, "data/written.xml");
         
+        System.out.println("---");
+        
         ActivityStore as2 = ActivityStoreBuilder.loadActivityStoreFromFile("data/written.xml");
         
-        Iterator<Activity> i2 = as2.iterator();
-        
-        while (i2.hasNext()) {
-            System.out.println (i2.next());
-        }
+        System.out.println(as);
     }
 }

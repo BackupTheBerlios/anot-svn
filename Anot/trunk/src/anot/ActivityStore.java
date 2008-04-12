@@ -53,7 +53,9 @@ public class ActivityStore {
         StringBuilder sb = new StringBuilder();
         for (Activity a : activities) {
             sb.append(a);
+            sb.append('\n');
         }
+        sb.setLength(sb.length()-1);
         return sb.toString();
     }
 }
