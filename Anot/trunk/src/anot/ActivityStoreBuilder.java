@@ -2,26 +2,36 @@
  */
 package anot;
 
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.*;
+import javax.xml.transform.TransformerException;
 import javax.xml.validation.*;
 import javax.xml.transform.stream.*;
-import javax.xml.transform.Source;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.stream.*;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import org.w3c.dom.*;
+import org.w3c.dom.ls.*;
 
 import java.text.SimpleDateFormat;
 
 import java.util.*;
+
 
 /**
  * 
@@ -30,18 +40,27 @@ import java.util.*;
 public class ActivityStoreBuilder {
 
     private static SimpleDateFormat simpleDateFormat =
-            new SimpleDateFormat("yyyy-mm-dd'T'hh:mm:ss");
-    
-    
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
     public static ActivityStore loadActivityStoreFromFile(String filename) {
         ActivityStore as = null;
         Document document = null;
+        FileInputStream fis = null;
         try {
-            document = openXMLDocument(new FileInputStream(new File(filename)),
+            fis = new FileInputStream(new File(filename));
+            document = openXMLDocument(new BufferedInputStream(fis),
                     new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
         } catch (Exception e) {
             System.err.println("Exception in FileInputStream stuff");
             System.err.println(e);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                // nothing
+                }
+            }
         }
 
         if (document != null) {
@@ -102,7 +121,7 @@ public class ActivityStoreBuilder {
         return activity;
     }
 
-    public static String parseRichText(String text) {
+    protected static String parseRichText(String text) {
         Scanner tokenizer = new Scanner(text.trim().replace("\n", "<br/>"));
         StringBuilder builder = new StringBuilder();
         while (tokenizer.hasNext()) {
@@ -199,16 +218,91 @@ public class ActivityStoreBuilder {
             System.err.println(ioe.getMessage());
             ioe.printStackTrace();
         } // try-catch
-
-
         return document;
     }
 
-    public static void saveActivityStoreToFile() {
-
+    public static void saveActivityStoreToFile(ActivityStore as, String filename) {
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(filename);
+            writeXMLDocument(as, fos);
+        } catch (FileNotFoundException ex) {
+            System.err.println("Exception in FileOutputStream stuff");
+            System.err.println(ex);
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException ex) {
+            // nothing
+            }
+        }
     }
 
-    public static void saveActivityStoreToJar() {
-
+    public static void saveActivityStoreToJar(ActivityStore as, String filename) {
+    /*Stream s = ClassLoader.getSystemResourceAsStream(filename).;
+    Document document = openXMLDocument(ClassLoader.getSystemResourceAsStream(filename),
+    new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
+    if (document != null) {
+    as = getActivityStore(document);
+    }*/
     }
+
+    protected static void writeXMLDocument(ActivityStore as, OutputStream os) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            DOMImplementation impl = builder.getDOMImplementation();
+            Document document = impl.createDocument("http://anot.berlios.de/schema/activitiesSchema",
+                    "activity-store", null);
+            Element rootElement = document.getDocumentElement();
+            rootElement.setAttribute("xmlns:xsi", 
+                    "http://www.w3.org/2001/XMLSchema-instance");
+            rootElement.setAttribute("xsi:schemaLocation", 
+                    "http://anot.berlios.de/schema/activitiesSchema activitiesSchema.xsd");
+
+            Iterator<Activity> i = as.iterator();
+            while (i.hasNext()) {
+                addActivity(document, i.next());
+            }
+
+            // this is so stupid
+            
+            // Prepare the DOM document for writing
+            Source source = new DOMSource(document);
+            Result result = new StreamResult(new OutputStreamWriter(os));
+
+            // Write the DOM document to the file
+            TransformerFactory tffactory = TransformerFactory.newInstance();
+            tffactory.setAttribute("indent-number", 4);
+            Transformer xformer = tffactory.newTransformer();
+            xformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            xformer.transform(source, result);
+
+        } catch (TransformerException ex) {
+            // ??
+            System.err.println(ex);
+            ex.printStackTrace();
+        } catch (ParserConfigurationException ex) {
+            // ??
+            System.err.println(ex);
+            ex.printStackTrace();
+        } // try-catch
+    }
+
+    protected static void addActivity(Document document, Activity activity) {
+        Element activityElement = document.createElement("activity");
+        activityElement.setAttribute("title", activity.getTitle());
+        activityElement.setAttribute("subject", activity.getSubject());
+        document.getDocumentElement().appendChild(activityElement);
+        
+        Element dateElement = document.createElement("date");
+        dateElement.setTextContent(simpleDateFormat.format(activity.getDate()));
+        activityElement.appendChild(dateElement);
+        
+        Element descriptionElement = document.createElement("description");
+        descriptionElement.setTextContent(activity.getDescription());
+        activityElement.appendChild(descriptionElement);
+    }
+
 }

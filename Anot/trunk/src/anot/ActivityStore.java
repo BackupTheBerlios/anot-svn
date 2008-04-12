@@ -37,7 +37,7 @@ public class ActivityStore {
     }
 
     public void addActivity(Activity a) {
-        activities.addFirst(a);
+        activities.addLast(a);
         if (comparator != null) {
             Collections.sort(activities, comparator);
         }
@@ -46,5 +46,14 @@ public class ActivityStore {
 
     public Iterator<Activity> iterator() {
         return activities.iterator();
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Activity a : activities) {
+            sb.append(a);
+        }
+        return sb.toString();
     }
 }

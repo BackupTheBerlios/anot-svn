@@ -20,7 +20,7 @@
         <description>Bajs</description>
     </activity>
     <activity title="INDA" subject="Programming">
-        <date>1995-11-03T10:20:00+02:00</date>
+        <date>1995-11-03T10:20:00</date>
         <description>Introduktion till datalogi</description>
     </activity>
 </activity-store>

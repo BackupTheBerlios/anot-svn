@@ -19,5 +19,15 @@ public class Frame {
         while (i.hasNext()) {
             System.out.println (i.next());
         }
+        
+        ActivityStoreBuilder.saveActivityStoreToFile(as, "data/written.xml");
+        
+        ActivityStore as2 = ActivityStoreBuilder.loadActivityStoreFromFile("data/written.xml");
+        
+        Iterator<Activity> i2 = as2.iterator();
+        
+        while (i2.hasNext()) {
+            System.out.println (i2.next());
+        }
     }
 }
