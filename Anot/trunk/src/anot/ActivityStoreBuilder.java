@@ -32,6 +32,11 @@ public class ActivityStoreBuilder {
     private static SimpleDateFormat simpleDateFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
+    /**
+     * Loads an {@link ActivityStore} from a file.
+     * @param filename Path to the file to be loaded.
+     * @return An {@link ActivityStore} representing the file.
+     */
     public static ActivityStore loadActivityStoreFromFile(String filename) {
         ActivityStore as = null;
         Document document = null;
@@ -59,6 +64,11 @@ public class ActivityStoreBuilder {
         return as;
     }
 
+    /**
+     * Loads an {@link ActivityStore} from a file inside the executing jar-file.
+     * @param filename Path to the file to be loaded.
+     * @return An {@link ActivityStore} representing the file.
+     */
     public static ActivityStore loadActivityStoreFromJar(String filename) {
         ActivityStore as = null;
         Document document = openXMLDocument(ClassLoader.getSystemResourceAsStream(filename),
@@ -111,6 +121,12 @@ public class ActivityStoreBuilder {
         return activity;
     }
 
+    /**
+     * Removes all superfluous whitespace, but keeps newlines. So:
+     * "text     t\n   text" will become "text t\ntext".
+     * @param text The string to be parsed.
+     * @return The string without superfluous whitespace.
+     */
     protected static String parseRichText(String text) {
         Scanner tokenizer = new Scanner(text.trim().replace("\n", "<br/>"));
         StringBuilder builder = new StringBuilder();
@@ -132,7 +148,7 @@ public class ActivityStoreBuilder {
      * 'em before you proceed.
      *
      * @param filename The InputStream of an xml-file.
-     * @param schema The Source for a schema. Can be null, and thus ignored
+     * @param schema The Source for a schema. Can be null, and thus ignored.
      * @return The opened and validated xml-file in a DOM-structure.
      */
     protected static Document openXMLDocument(InputStream file, Source schema) {
@@ -236,17 +252,19 @@ public class ActivityStoreBuilder {
         }
     }
 
-    public static void saveActivityStoreToJar(ActivityStore as, String filename) {
-    /*Stream s = ClassLoader.getSystemResourceAsStream(filename).;
+    /*public static void saveActivityStoreToJar(ActivityStore as, String filename) {
+    Stream s = ClassLoader.getSystemResourceAsStream(filename).;
     Document document = openXMLDocument(ClassLoader.getSystemResourceAsStream(filename),
     new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
     if (document != null) {
     as = getActivityStore(document);
-    }*/
     }
-
+    }*/
+    
     protected static void writeXMLDocument(ActivityStore as, OutputStream os) {
         try {
+            // create a document and add a root element with appropriate 
+            // attributes
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             DOMImplementation impl = builder.getDOMImplementation();
@@ -265,6 +283,8 @@ public class ActivityStoreBuilder {
             }
 
             // this is so stupid
+            // the following lines are to write the xml to file with correct
+            // indentation
 
             // Prepare the DOM document for writing
             Source source = new DOMSource(document);
@@ -289,6 +309,12 @@ public class ActivityStoreBuilder {
         } // try-catch
     }
 
+    /**
+     * "Transforms" <code>activity</code> into an xml-tag and inserts it into
+     * <code>document</code>. 
+     * @param document
+     * @param activity
+     */
     protected static void addActivity(Document document, Activity activity) {
         Element activityElement = document.createElement("activity");
         activityElement.setAttribute("title", activity.getTitle());
