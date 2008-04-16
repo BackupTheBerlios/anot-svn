@@ -111,6 +111,14 @@ public class DiagramPanel extends JPanel implements ActionListener,
     public void paint(Graphics g) {
         g.setColor(Color.white);
         g.fillRect(0, 0, getWidth(), getHeight());
+        
+        Color color = Color.white;
+        int increment = getHeight()/30;
+        for (int i = 0; i < getHeight(); i += increment) {
+            g.setColor(color);
+            g.fillRect(0,i, getWidth(), increment);
+            color = new Color(color.getRed()-3, color.getGreen()-3, color.getBlue()-2);
+        }
 
         Iterator<Activity> i = activityStore.iterator();
         int p = 0;
@@ -134,6 +142,13 @@ public class DiagramPanel extends JPanel implements ActionListener,
             //g.fillRect(p * 40 + 10, getHeight() - 10 - (int) h * 10, 35, (int) h * 10);
             g.setColor(Color.pink);
             g.fillRect(p * 40 + 10, getHeight() - h, 35, h);
+            
+            g.setColor(Color.gray);
+            for (double y = 0; y <= h; y += pixelsPerDay) {
+                g.drawLine(p*40+10, (int)Math.floor(getHeight()-y), p*40+9+35, (int)Math.floor(getHeight()-y));
+            }
+            
+            
             p++;
         }
         

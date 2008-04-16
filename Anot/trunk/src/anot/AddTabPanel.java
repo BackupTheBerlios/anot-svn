@@ -28,7 +28,7 @@ public class AddTabPanel extends TabPanel {
 
                     System.out.println(title + " : " + subject + " : " + description);
 
-                    Date date = dateFormat.parse(dateTextField.getText().trim() +
+                    Date date = dateTimeFormat.parse(dateTextField.getText().trim() +
                             timeTextField.getText().trim());
                     
                     if (Calendar.getInstance().getTime().after(date)) {

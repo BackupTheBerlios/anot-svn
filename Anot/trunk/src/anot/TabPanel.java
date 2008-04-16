@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
  */
 public abstract class TabPanel extends javax.swing.JPanel implements ActionListener {
     
-    protected SimpleDateFormat dateFormat =
+    protected SimpleDateFormat dateTimeFormat =
             new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
     
     protected ActivityStore activityStore;
