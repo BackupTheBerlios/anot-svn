@@ -44,6 +44,10 @@ public class Frame extends javax.swing.JFrame {
         ActivityStore as = ActivityStoreBuilder.loadActivityStoreFromFile("data/activities.xml");
         
         diagramPanel.setActivityStore(as);
+        addTabPanel.setActivityStore(as);
+        viewTabPanel.setActivityStore(as);
+        
+        tabbedPane.setEnabledAt(1, false);
     }
 
     /** This method is called from within the constructor to

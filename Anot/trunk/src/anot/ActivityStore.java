@@ -56,6 +56,16 @@ public class ActivityStore {
         return activities.iterator();
     }
     
+    public Date getLatestDate() {
+        Date date = Calendar.getInstance().getTime();
+        for (Activity a : activities) {
+            if (a.getDate().after(date))
+                date = a.getDate();
+        }
+        System.out.println ("getLatestDate(): " + date);
+        return date;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -32,4 +32,8 @@ public class ViewTabPanel extends TabPanel {
             }
         });
     }
+
+    public void actionPerformed(ActionEvent e) {
+        
+    }
 }

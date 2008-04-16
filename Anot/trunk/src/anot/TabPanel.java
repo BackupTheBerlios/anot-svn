@@ -6,15 +6,30 @@
 
 package anot;
 
+import java.awt.event.*;
+import java.text.SimpleDateFormat;
+
 /**
  *
  * @author  tgwizard
  */
-public class TabPanel extends javax.swing.JPanel {
+public abstract class TabPanel extends javax.swing.JPanel implements ActionListener {
+    
+    protected SimpleDateFormat dateFormat =
+            new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
+    
+    protected ActivityStore activityStore;
     
     /** Creates new form TabPanel */
     public TabPanel () {
         initComponents ();
+    }
+
+    public void setActivityStore(ActivityStore activityStore) {
+        if (this.activityStore != null)
+            this.activityStore.removeListener(this);
+        this.activityStore = activityStore;
+        this.activityStore.addListener(this);
     }
     
     /** This method is called from within the constructor to
@@ -30,11 +45,11 @@ public class TabPanel extends javax.swing.JPanel {
         titleTextField = new javax.swing.JTextField();
         dateTextField = new javax.swing.JTextField();
         timeLabel = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        timeTextField = new javax.swing.JTextField();
         subjectLabel = new javax.swing.JLabel();
         descriptionLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        descriptionTextArea = new javax.swing.JTextArea();
         positiveButton = new javax.swing.JButton();
         negativeButton = new javax.swing.JButton();
         subjectTextField = new javax.swing.JTextField();
@@ -47,15 +62,15 @@ public class TabPanel extends javax.swing.JPanel {
 
         timeLabel.setText("Time");
 
-        jTextField1.setText("hh:mm:ss");
+        timeTextField.setText("hh:mm:ss");
 
         subjectLabel.setText("Subject");
 
         descriptionLabel.setText("Description");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        descriptionTextArea.setColumns(20);
+        descriptionTextArea.setRows(5);
+        jScrollPane1.setViewportView(descriptionTextArea);
 
         positiveButton.setText("Tjotta");
 
@@ -79,7 +94,7 @@ public class TabPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(timeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1)))
+                        .addComponent(timeTextField)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(subjectLabel)
@@ -115,7 +130,7 @@ public class TabPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(timeLabel)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(timeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -130,14 +145,14 @@ public class TabPanel extends javax.swing.JPanel {
     protected javax.swing.JLabel dateLabel;
     protected javax.swing.JTextField dateTextField;
     protected javax.swing.JLabel descriptionLabel;
+    protected javax.swing.JTextArea descriptionTextArea;
     private javax.swing.JScrollPane jScrollPane1;
-    protected javax.swing.JTextArea jTextArea1;
-    protected javax.swing.JTextField jTextField1;
     protected javax.swing.JButton negativeButton;
     protected javax.swing.JButton positiveButton;
     protected javax.swing.JLabel subjectLabel;
     protected javax.swing.JTextField subjectTextField;
     protected javax.swing.JLabel timeLabel;
+    protected javax.swing.JTextField timeTextField;
     protected javax.swing.JLabel titleLabel;
     protected javax.swing.JTextField titleTextField;
     // End of variables declaration//GEN-END:variables
