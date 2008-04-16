@@ -29,6 +29,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="helpMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="72"/>
                 <Property name="text" type="java.lang.String" value="Help"/>
               </Properties>
             </MenuItem>

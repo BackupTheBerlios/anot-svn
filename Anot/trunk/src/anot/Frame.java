@@ -107,6 +107,7 @@ public class Frame extends javax.swing.JFrame {
         helpMenu.setMnemonic('H');
         helpMenu.setText("Help");
 
+        helpMenuItem.setMnemonic('H');
         helpMenuItem.setText("Help");
         helpMenu.add(helpMenuItem);
         helpMenu.add(jSeparator1);

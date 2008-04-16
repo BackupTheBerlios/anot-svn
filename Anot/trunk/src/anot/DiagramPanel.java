@@ -13,23 +13,32 @@ import java.util.*;
  * 
  * @author Adam Renberg <tgwizard@gmail.com>
  */
-public class DiagramPanel extends JPanel implements ActionListener {
+public class DiagramPanel extends JPanel implements ActionListener,
+        MouseListener, MouseMotionListener {
 
     ActivityStore activityStore;
     //...where instance variables are declared:
     JPopupMenu popup;
-    JMenuItem reverseSortMenuItem;
-    JMenuItem sortByDateMenuItem;
-    JMenuItem sortBySubjectMenuItem;
+    JCheckBoxMenuItem reverseSortMenuItem;
+    JRadioButtonMenuItem sortByDateMenuItem;
+    JRadioButtonMenuItem sortBySubjectMenuItem;
+    
+    int x = -1;
+    int y = -1;
 
     public DiagramPanel() {
         //TODO: background color?
 
-
+        addMouseListener(this);
+        addMouseMotionListener(this);
 
         popup = new JPopupMenu();
+        ButtonGroup group = new ButtonGroup();
 
-        sortByDateMenuItem = new JMenuItem("Sort by date");
+
+        sortByDateMenuItem = new JRadioButtonMenuItem("Sort by date");
+        sortByDateMenuItem.setSelected(true);
+        group.add(sortByDateMenuItem);
         sortByDateMenuItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -43,14 +52,30 @@ public class DiagramPanel extends JPanel implements ActionListener {
         });
         popup.add(sortByDateMenuItem);
 
-        sortBySubjectMenuItem = new JMenuItem("Sort by subject");
+        sortBySubjectMenuItem = new JRadioButtonMenuItem("Sort by subject");
+        group.add(sortBySubjectMenuItem);
+        sortBySubjectMenuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
         popup.add(sortBySubjectMenuItem);
 
         popup.add(new JPopupMenu.Separator());
 
-        reverseSortMenuItem = new JMenuItem("Reverse sort");
+        reverseSortMenuItem = new JCheckBoxMenuItem("Reverse sort");
+        reverseSortMenuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (activityStore.isReverseSort()) {
+                    activityStore.setReverseSort(false);
+                } else {
+                    activityStore.setReverseSort(true);
+                }
+            }
+        });
         popup.add(reverseSortMenuItem);
-        //menuItem.addActionListener(this);
 
         //Add listener to components that can bring up popup menus.
         addMouseListener(new MouseAdapter() {
@@ -111,9 +136,44 @@ public class DiagramPanel extends JPanel implements ActionListener {
             g.fillRect(p * 40 + 10, getHeight() - h, 35, h);
             p++;
         }
+        
+        g.setColor(Color.orange);
+        g.drawLine(x, 0, x, getHeight());
+        g.drawLine(0, y, getWidth(), y);
     }
 
     public void actionPerformed(ActionEvent e) {
+        repaint();
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        x = e.getX();
+        repaint();
+    }
+
+    public void mousePressed(MouseEvent e) {
+        
+    }
+
+    public void mouseReleased(MouseEvent e) {
+        
+    }
+
+    public void mouseEntered(MouseEvent e) {
+        
+    }
+
+    public void mouseExited(MouseEvent e) {
+        
+    }
+
+    public void mouseDragged(MouseEvent e) {
+        
+    }
+
+    public void mouseMoved(MouseEvent e) {
+        y = e.getY();
+        x = e.getX();
         repaint();
     }
 }
