@@ -12,15 +12,19 @@
                  xmlns='http://anot.berlios.de/schema/activitiesSchema'
                  xsi:schemaLocation='http://anot.berlios.de/schema/activitiesSchema activitiesSchema.xsd'>
     <activity title="Assign" subject="General">
-        <date>2008-04-11T21:36:23+02:00</date>
-        <description>This is a description</description>
+        <date>2008-04-17T21:36:23+02:00</date>
+        <description>
+            This is a description
+            
+            ksjhkjasd
+        </description>
     </activity>
     <activity title="Assign2" subject="General">
-        <date>2007-01-22T00:30:00+02:00</date>
+        <date>2008-04-22T00:30:00+02:00</date>
         <description>Bajs</description>
     </activity>
     <activity title="INDA" subject="Programming">
-        <date>1995-11-03T10:20:00</date>
+        <date>2008-05-03T10:20:00</date>
         <description>Introduktion till datalogi</description>
     </activity>
 </activity-store>

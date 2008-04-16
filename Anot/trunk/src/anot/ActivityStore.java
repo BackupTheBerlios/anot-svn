@@ -27,6 +27,14 @@ public class ActivityStore {
             al.actionPerformed(ae);
         }
     }
+    
+    public void addListener(ActionListener al) {
+        listeners.add(al);
+    }
+    
+    public void removeListener(ActionListener al) {
+        listeners.remove(al);
+    }
 
     public void sortActivites(Comparator<Activity> comparator) {
         this.comparator = comparator;
