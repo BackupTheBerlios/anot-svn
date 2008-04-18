@@ -7,6 +7,7 @@ package anot;
 import java.awt.event.*;
 import java.text.ParseException;
 import java.util.*;
+import javax.swing.JOptionPane;
 
 /**
  * 
@@ -21,10 +22,19 @@ public class AddTabPanel extends TabPanel {
 
             public void actionPerformed(ActionEvent e) {
                 try {
-                    //TODO: validation
+                    //TODO: validation of date & time
                     String title = titleTextField.getText().trim();
                     String subject = subjectTextField.getText().trim();
                     String description = descriptionTextArea.getText().trim();
+                    
+                    //if title or subject or description = empty
+                    if(titleTextField.getText().equals((String) "") || subjectTextField.getText().equals((String) "")
+                            || descriptionTextArea.getText().equals((String) "")){
+                        JOptionPane popup = new JOptionPane();
+                        //error
+                        JOptionPane.showMessageDialog(popup, "Please fill out all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
 
                     System.out.println(title + " : " + subject + " : " + description);
 
