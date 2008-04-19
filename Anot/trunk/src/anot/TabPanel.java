@@ -3,26 +3,67 @@
  *
  * Created on April 16, 2008, 12:35 PM
  */
-
 package anot;
 
+import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
+import javax.swing.*;
+import java.util.*;
 
 /**
  *
  * @author  tgwizard
  */
 public abstract class TabPanel extends javax.swing.JPanel {
-    
+
     protected SimpleDateFormat dateTimeFormat =
             new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
-    
     private ActivityStore activityStore;
-    
+
     /** Creates new form TabPanel */
-    public TabPanel () {
-        initComponents ();
+    public TabPanel() {
+        initComponents();
+
+        setFocusCycleRoot(true);
+        Vector<Component> v = new Vector<Component>(7);
+        v.add(titleTextField);
+        v.add(dateTextField);
+        v.add(timeTextField);
+        v.add(subjectTextField);
+        v.add(descriptionTextArea);
+        v.add(positiveButton);
+        v.add(negativeButton);
+        setFocusTraversalPolicy(new MyOwnFocusTraversalPolicy(v));
+
+        Set forwardKeys = getFocusTraversalKeys(
+                KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS);
+        Set newForwardKeys = new HashSet(forwardKeys);
+        newForwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0));
+        descriptionTextArea.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,
+                newForwardKeys);
+
+        Set backwardKeys = getFocusTraversalKeys(
+                KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS);
+        Set newBackwardKeys = new HashSet(backwardKeys);
+        newBackwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_DOWN_MASK));
+        descriptionTextArea.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
+                newBackwardKeys);
+
+        KeyAdapter enterInvokesPositive = new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    positiveButton.doClick();
+                }
+            }
+        };
+
+        titleTextField.addKeyListener(enterInvokesPositive);
+        dateTextField.addKeyListener(enterInvokesPositive);
+        timeTextField.addKeyListener(enterInvokesPositive);
+        subjectTextField.addKeyListener(enterInvokesPositive);
     }
 
     protected ActivityStore getActivityStore() {
@@ -30,11 +71,11 @@ public abstract class TabPanel extends javax.swing.JPanel {
     }
 
     public abstract void setActivityStore(ActivityStore activityStore);
-    
+
     protected void doSetActivityStore(ActivityStore activityStore) {
         this.activityStore = activityStore;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -142,8 +183,6 @@ public abstract class TabPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-    
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JLabel dateLabel;
     protected javax.swing.JTextField dateTextField;
@@ -159,5 +198,41 @@ public abstract class TabPanel extends javax.swing.JPanel {
     protected javax.swing.JLabel titleLabel;
     protected javax.swing.JTextField titleTextField;
     // End of variables declaration//GEN-END:variables
-    
+    static class MyOwnFocusTraversalPolicy
+            extends FocusTraversalPolicy {
+
+        Vector<Component> order;
+
+        public MyOwnFocusTraversalPolicy(Vector<Component> order) {
+            this.order = new Vector<Component>(order.size());
+            this.order.addAll(order);
+        }
+
+        public Component getComponentAfter(Container focusCycleRoot,
+                Component aComponent) {
+            int idx = (order.indexOf(aComponent) + 1) % order.size();
+            return order.get(idx);
+        }
+
+        public Component getComponentBefore(Container focusCycleRoot,
+                Component aComponent) {
+            int idx = order.indexOf(aComponent) - 1;
+            if (idx < 0) {
+                idx = order.size() - 1;
+            }
+            return order.get(idx);
+        }
+
+        public Component getDefaultComponent(Container focusCycleRoot) {
+            return order.get(0);
+        }
+
+        public Component getLastComponent(Container focusCycleRoot) {
+            return order.lastElement();
+        }
+
+        public Component getFirstComponent(Container focusCycleRoot) {
+            return order.get(0);
+        }
+    }
 }

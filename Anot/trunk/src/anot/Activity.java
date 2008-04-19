@@ -18,6 +18,17 @@ public class Activity {
     public Activity(String title) {
         this.title = title;
     }
+    
+    public Activity(String title, String subject, String description, Date date) {
+        set(title, subject, description, date);
+    }
+    
+    public void set(String title, String subject, String description, Date date) {
+        this.title = title;
+        this.subject = subject;
+        this.description = description;
+        this.date = date;
+    }
 
     public String getTitle() {
         return title;

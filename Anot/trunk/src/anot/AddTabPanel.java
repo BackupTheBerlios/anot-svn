@@ -18,6 +18,7 @@ public class AddTabPanel extends TabPanel {
     public AddTabPanel() {
 
         positiveButton.setText("Add");
+        positiveButton.setMnemonic('A');
         positiveButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -51,6 +52,7 @@ public class AddTabPanel extends TabPanel {
                     a.setDate(date);
 
                     getActivityStore().addActivity(a);
+                    getActivityStore().setSelectedActivity(a);
 
                 } catch (ParseException ex) {
                 //TODO: popup
@@ -61,6 +63,7 @@ public class AddTabPanel extends TabPanel {
 
 
         negativeButton.setText("Clear");
+        negativeButton.setMnemonic('C');
         negativeButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

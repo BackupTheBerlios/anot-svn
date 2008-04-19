@@ -20,7 +20,7 @@ public class Frame extends javax.swing.JFrame {
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            // nothing
+        // nothing
         }
         /*ActivityStore as = ActivityStoreBuilder.loadActivityStoreFromJar("activities.xml");
         System.out.println(as);
@@ -30,25 +30,33 @@ public class Frame extends javax.swing.JFrame {
         System.out.println(as);*/
 
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new Frame().setVisible(true);
             }
         });
     }
-
     protected ActivityStore activityStore;
-    
+
     /** Creates new form Frame */
     public Frame() {
         initComponents();
+
+        quitMenuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
         
+
         //TODO: error handling, popup-window etc.
         activityStore = ActivityStoreBuilder.loadActivityStoreFromFile("data/activities.xml");
-        
+
         diagramPanel.setActivityStore(activityStore);
         addTabPanel.setActivityStore(activityStore);
         viewTabPanel.setActivityStore(activityStore);
-        
+
         tabbedPane.setEnabledAt(1, false);
         activityStore.addSelectionListener(new ActionListener() {
 
@@ -61,9 +69,8 @@ public class Frame extends javax.swing.JFrame {
                     tabbedPane.setEnabledAt(1, true);
                     tabbedPane.setSelectedIndex(1);
                 }
-                
+
             }
-            
         });
     }
 

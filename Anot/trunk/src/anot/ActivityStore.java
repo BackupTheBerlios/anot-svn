@@ -97,6 +97,13 @@ public class ActivityStore {
         activities.remove(a);
         notifyListeners();
     }
+    
+    public void modifiyActivity(Activity a) {
+        sortActivities();
+        if (a == selectedActivity) {
+            setSelectedActivity(a);
+        }
+    }
 
     protected void sortActivities() {
         if (comparator != null) {
