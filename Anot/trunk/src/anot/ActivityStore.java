@@ -89,6 +89,14 @@ public class ActivityStore {
         activities.addLast(a);
         sortActivities();
     }
+    
+    public void removeActivity(Activity a) {
+        if (a == selectedActivity) {
+            setSelectedActivity(null);
+        }
+        activities.remove(a);
+        notifyListeners();
+    }
 
     protected void sortActivities() {
         if (comparator != null) {

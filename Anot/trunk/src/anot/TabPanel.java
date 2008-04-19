@@ -13,23 +13,26 @@ import java.text.SimpleDateFormat;
  *
  * @author  tgwizard
  */
-public abstract class TabPanel extends javax.swing.JPanel implements ActionListener {
+public abstract class TabPanel extends javax.swing.JPanel {
     
     protected SimpleDateFormat dateTimeFormat =
             new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
     
-    protected ActivityStore activityStore;
+    private ActivityStore activityStore;
     
     /** Creates new form TabPanel */
     public TabPanel () {
         initComponents ();
     }
 
-    public void setActivityStore(ActivityStore activityStore) {
-        if (this.activityStore != null)
-            this.activityStore.removeListener(this);
+    protected ActivityStore getActivityStore() {
+        return activityStore;
+    }
+
+    public abstract void setActivityStore(ActivityStore activityStore);
+    
+    protected void doSetActivityStore(ActivityStore activityStore) {
         this.activityStore = activityStore;
-        this.activityStore.addListener(this);
     }
     
     /** This method is called from within the constructor to

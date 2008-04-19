@@ -5,6 +5,7 @@
  */
 package anot;
 
+import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -35,18 +36,35 @@ public class Frame extends javax.swing.JFrame {
         });
     }
 
+    protected ActivityStore activityStore;
+    
     /** Creates new form Frame */
     public Frame() {
         initComponents();
         
         //TODO: error handling, popup-window etc.
-        ActivityStore as = ActivityStoreBuilder.loadActivityStoreFromFile("data/activities.xml");
+        activityStore = ActivityStoreBuilder.loadActivityStoreFromFile("data/activities.xml");
         
-        diagramPanel.setActivityStore(as);
-        addTabPanel.setActivityStore(as);
-        viewTabPanel.setActivityStore(as);
+        diagramPanel.setActivityStore(activityStore);
+        addTabPanel.setActivityStore(activityStore);
+        viewTabPanel.setActivityStore(activityStore);
         
         tabbedPane.setEnabledAt(1, false);
+        activityStore.addSelectionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                Activity a = activityStore.getSelectedActivity();
+                if (a == null) {
+                    tabbedPane.setEnabledAt(1, false);
+                    tabbedPane.setSelectedIndex(0);
+                } else {
+                    tabbedPane.setEnabledAt(1, true);
+                    tabbedPane.setSelectedIndex(1);
+                }
+                
+            }
+            
+        });
     }
 
     /** This method is called from within the constructor to

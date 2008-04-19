@@ -26,10 +26,9 @@ public class AddTabPanel extends TabPanel {
                     String title = titleTextField.getText().trim();
                     String subject = subjectTextField.getText().trim();
                     String description = descriptionTextArea.getText().trim();
-                    
+
                     //if title or subject or description = empty
-                    if(titleTextField.getText().equals((String) "") || subjectTextField.getText().equals((String) "")
-                            || descriptionTextArea.getText().equals((String) "")){
+                    if (titleTextField.getText().equals((String) "") || subjectTextField.getText().equals((String) "") || descriptionTextArea.getText().equals((String) "")) {
                         JOptionPane popup = new JOptionPane();
                         //error
                         JOptionPane.showMessageDialog(popup, "Please fill out all fields.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -40,21 +39,21 @@ public class AddTabPanel extends TabPanel {
 
                     Date date = dateTimeFormat.parse(dateTextField.getText().trim() +
                             timeTextField.getText().trim());
-                    
+
                     if (Calendar.getInstance().getTime().after(date)) {
                         //TODO: popup
                         return;
                     }
-                    
+
                     Activity a = new Activity(title);
                     a.setSubject(subject);
                     a.setDescription(description);
                     a.setDate(date);
-                    
-                    activityStore.addActivity(a);
-                    
+
+                    getActivityStore().addActivity(a);
+
                 } catch (ParseException ex) {
-                    //TODO: popup
+                //TODO: popup
                 }
             }
         });
@@ -70,12 +69,16 @@ public class AddTabPanel extends TabPanel {
                 descriptionTextArea.setText("");
                 dateTextField.setText("yyyy-mm-dd");
                 timeTextField.setText("hh:mm:ss");
-                
+
             }
         });
     }
 
-    public void actionPerformed(ActionEvent e) {
-        
+    @Override
+    public void setActivityStore(ActivityStore activityStore) {
+        //if (this.activityStore != null)
+        //this.activityStore.removeListener(this);
+        doSetActivityStore(activityStore);
+    //this.activityStore.addListener(this);
     }
 }
