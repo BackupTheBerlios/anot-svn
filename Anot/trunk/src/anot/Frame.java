@@ -40,6 +40,7 @@ public class Frame extends javax.swing.JFrame {
 
     /** Creates new form Frame */
     public Frame() {
+        
         initComponents();
 
         quitMenuItem.addActionListener(new ActionListener() {
@@ -53,9 +54,18 @@ public class Frame extends javax.swing.JFrame {
         //TODO: error handling, popup-window etc.
         activityStore = ActivityStoreBuilder.loadActivityStoreFromFile("data/activities.xml");
 
+        
+        DiagramPanel diagramPanel = new DiagramPanel();
         diagramPanel.setActivityStore(activityStore);
+        scrollPane.setViewportView(diagramPanel);
+        
         addTabPanel.setActivityStore(activityStore);
         viewTabPanel.setActivityStore(activityStore);
+        
+        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+        tabbedPane.setToolTipTextAt(0, "Add Tab (Alt+1)");
+        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+        tabbedPane.setToolTipTextAt(1, "View Tab (Alt+2)");
 
         tabbedPane.setEnabledAt(1, false);
         activityStore.addSelectionListener(new ActionListener() {
@@ -82,7 +92,7 @@ public class Frame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        diagramPanel = new anot.DiagramPanel();
+        scrollPane = new javax.swing.JScrollPane();
         tabbedPane = new javax.swing.JTabbedPane();
         addTabPanel = new anot.AddTabPanel();
         viewTabPanel = new anot.ViewTabPanel();
@@ -98,18 +108,8 @@ public class Frame extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(610, 480));
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
-        javax.swing.GroupLayout diagramPanelLayout = new javax.swing.GroupLayout(diagramPanel);
-        diagramPanel.setLayout(diagramPanelLayout);
-        diagramPanelLayout.setHorizontalGroup(
-            diagramPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 619, Short.MAX_VALUE)
-        );
-        diagramPanelLayout.setVerticalGroup(
-            diagramPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 210, Short.MAX_VALUE)
-        );
-
-        getContentPane().add(diagramPanel);
+        scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        getContentPane().add(scrollPane);
 
         tabbedPane.setMaximumSize(new java.awt.Dimension(32767, 210));
         tabbedPane.setMinimumSize(new java.awt.Dimension(50, 210));
@@ -149,13 +149,13 @@ public class Frame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private anot.AddTabPanel addTabPanel;
-    private anot.DiagramPanel diagramPanel;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem quitMenuItem;
+    protected javax.swing.JScrollPane scrollPane;
     private javax.swing.JTabbedPane tabbedPane;
     private anot.ViewTabPanel viewTabPanel;
     // End of variables declaration//GEN-END:variables

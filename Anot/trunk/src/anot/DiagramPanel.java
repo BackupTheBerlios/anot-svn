@@ -98,20 +98,31 @@ public class DiagramPanel extends JPanel implements MouseListener,
             }
         });
     }
+    
+    protected ActivityStore getActivityStore() {
+        return activityStore;
+    }
+    
+    protected void checkForScrollbar() {
+        setPreferredSize(new Dimension(activityStore.getSize()*stapleNewPos+2*stapleStart, 0));
+        revalidate();
+    }
 
     public void setActivityStore(ActivityStore activityStore) {
         //FIXME: make the following work:
         /*if (this.activityStore != null) {
-            this.activityStore.removeListener(this);
+        this.activityStore.removeListener(this);
         }*/
         this.activityStore = activityStore;
         this.activityStore.addListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                checkForScrollbar();
+                revalidate();
                 repaint();
             }
         });
-        
+
         this.activityStore.addSelectionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -124,16 +135,20 @@ public class DiagramPanel extends JPanel implements MouseListener,
 
     @Override
     public void paint(Graphics g) {
+        if (activityStore == null) {
+            return;
+        }
+
         g.setColor(Color.white);
         g.fillRect(0, 0, getWidth(), getHeight());
 
         Color color = Color.white;
-        int increment = getHeight() / 30;
+        /*int increment = getHeight() / 30;
         for (int i = 0; i < getHeight(); i += increment) {
             g.setColor(color);
             g.fillRect(0, i, getWidth(), increment);
             color = new Color(color.getRed() - 3, color.getGreen() - 3, color.getBlue() - 2);
-        }
+        }*/
 
         Iterator<Activity> i = activityStore.iterator();
         int p = 0;
@@ -183,9 +198,9 @@ public class DiagramPanel extends JPanel implements MouseListener,
         x = e.getX();
         
         //FIXME: this is not beautiful
-        for(int p = 0; p < activityStore.getSize(); p++) {
+        for (int p = 0; p < activityStore.getSize(); p++) {
             int a = p * stapleNewPos + stapleStart;
-            if (x >= a && x <= (a+stapleWidth)) {
+            if (x >= a && x <= (a + stapleWidth)) {
                 Iterator<Activity> iter = activityStore.iterator();
                 while (p > 0) {
                     iter.next();
