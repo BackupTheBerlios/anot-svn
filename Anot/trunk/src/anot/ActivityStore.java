@@ -12,13 +12,17 @@ import java.util.*;
 public class ActivityStore {
 
     LinkedList<Activity> activities;
+    Activity selectedActivity;
     LinkedList<ActionListener> listeners;
+    LinkedList<ActionListener> selectionListeners;
     Comparator<Activity> comparator;
     boolean reverseSort;
 
     public ActivityStore() {
         activities = new LinkedList<Activity>();
+        selectedActivity = null;
         listeners = new LinkedList<ActionListener>();
+        selectionListeners = new LinkedList<ActionListener>();
         comparator = new Comparator<Activity>() {
 
             public int compare(Activity o1, Activity o2) {
@@ -40,6 +44,30 @@ public class ActivityStore {
 
     public void removeListener(ActionListener al) {
         listeners.remove(al);
+    }
+
+    protected void notifySelectionListeners() {
+        ActionEvent ae = new ActionEvent(this, -1, "Activity Selected");
+        for (ActionListener al : selectionListeners) {
+            al.actionPerformed(ae);
+        }
+    }
+
+    public void addSelectionListener(ActionListener al) {
+        selectionListeners.add(al);
+    }
+
+    public void removeSelectionListener(ActionListener al) {
+        selectionListeners.remove(al);
+    }
+
+    public Activity getSelectedActivity() {
+        return selectedActivity;
+    }
+
+    public void setSelectedActivity(Activity selectedActivity) {
+        this.selectedActivity = selectedActivity;
+        notifySelectionListeners();
     }
 
     public void sortActivites(Comparator<Activity> comparator) {
@@ -83,8 +111,11 @@ public class ActivityStore {
                 date = a.getDate();
             }
         }
-        System.out.println("getLatestDate(): " + date);
         return date;
+    }
+
+    public int getSize() {
+        return activities.size();
     }
 
     @Override

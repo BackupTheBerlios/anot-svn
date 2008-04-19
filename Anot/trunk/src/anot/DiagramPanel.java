@@ -13,8 +13,8 @@ import java.util.*;
  * 
  * @author Adam Renberg <tgwizard@gmail.com>
  */
-public class DiagramPanel extends JPanel implements ActionListener,
-        MouseListener, MouseMotionListener {
+public class DiagramPanel extends JPanel implements MouseListener,
+        MouseMotionListener {
 
     ActivityStore activityStore;
     //...where instance variables are declared:
@@ -22,9 +22,11 @@ public class DiagramPanel extends JPanel implements ActionListener,
     JCheckBoxMenuItem reverseSortMenuItem;
     JRadioButtonMenuItem sortByDateMenuItem;
     JRadioButtonMenuItem sortBySubjectMenuItem;
-    
     int x = -1;
     int y = -1;
+    private int stapleWidth = 35;
+    private int stapleStart = 10;
+    private int stapleNewPos = 40;
 
     public DiagramPanel() {
         //TODO: background color?
@@ -98,11 +100,24 @@ public class DiagramPanel extends JPanel implements ActionListener,
     }
 
     public void setActivityStore(ActivityStore activityStore) {
-        if (this.activityStore != null) {
+        //FIXME: make the following work:
+        /*if (this.activityStore != null) {
             this.activityStore.removeListener(this);
-        }
+        }*/
         this.activityStore = activityStore;
-        this.activityStore.addListener(this);
+        this.activityStore.addListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                repaint();
+            }
+        });
+        
+        this.activityStore.addSelectionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                repaint();
+            }
+        });
 
         repaint();
     }
@@ -111,13 +126,13 @@ public class DiagramPanel extends JPanel implements ActionListener,
     public void paint(Graphics g) {
         g.setColor(Color.white);
         g.fillRect(0, 0, getWidth(), getHeight());
-        
+
         Color color = Color.white;
-        int increment = getHeight()/30;
+        int increment = getHeight() / 30;
         for (int i = 0; i < getHeight(); i += increment) {
             g.setColor(color);
-            g.fillRect(0,i, getWidth(), increment);
-            color = new Color(color.getRed()-3, color.getGreen()-3, color.getBlue()-2);
+            g.fillRect(0, i, getWidth(), increment);
+            color = new Color(color.getRed() - 3, color.getGreen() - 3, color.getBlue() - 2);
         }
 
         Iterator<Activity> i = activityStore.iterator();
@@ -137,53 +152,71 @@ public class DiagramPanel extends JPanel implements ActionListener,
 
             int h = (int) (days * pixelsPerDay);
 
-            System.out.println(p + " :::: " + h);
+            //System.out.println(p + " :::: " + h);
 
             //g.fillRect(p * 40 + 10, getHeight() - 10 - (int) h * 10, 35, (int) h * 10);
-            g.setColor(Color.pink);
-            g.fillRect(p * 40 + 10, getHeight() - h, 35, h);
-            
+            if (activityStore.getSelectedActivity() == a) {
+                g.setColor(Color.magenta);
+            } else {
+                g.setColor(Color.pink);
+            }
+            g.fillRect(p * stapleNewPos + stapleStart, getHeight() - h, stapleWidth, h);
+
             g.setColor(Color.gray);
             for (double y = 0; y <= h; y += pixelsPerDay) {
-                g.drawLine(p*40+10, (int)Math.floor(getHeight()-y), p*40+9+35, (int)Math.floor(getHeight()-y));
+                g.drawLine(p * stapleNewPos + stapleStart,
+                        (int) Math.floor(getHeight() - y),
+                        p * stapleNewPos + stapleStart - 1 + stapleWidth,
+                        (int) Math.floor(getHeight() - y));
             }
-            
-            
+
+
             p++;
         }
-        
+
         g.setColor(Color.orange);
         g.drawLine(x, 0, x, getHeight());
         g.drawLine(0, y, getWidth(), y);
     }
 
-    public void actionPerformed(ActionEvent e) {
-        repaint();
-    }
-
     public void mouseClicked(MouseEvent e) {
         x = e.getX();
+        
+        //FIXME: this is not beautiful
+        for(int p = 0; p < activityStore.getSize(); p++) {
+            int a = p * stapleNewPos + stapleStart;
+            if (x >= a && x <= (a+stapleWidth)) {
+                Iterator<Activity> iter = activityStore.iterator();
+                while (p > 0) {
+                    iter.next();
+                    p--;
+                }
+                activityStore.setSelectedActivity(iter.next());
+                return;
+            }
+        }
+        activityStore.setSelectedActivity(null);
         repaint();
     }
 
     public void mousePressed(MouseEvent e) {
-        
+
     }
 
     public void mouseReleased(MouseEvent e) {
-        
+
     }
 
     public void mouseEntered(MouseEvent e) {
-        
+
     }
 
     public void mouseExited(MouseEvent e) {
-        
+
     }
 
     public void mouseDragged(MouseEvent e) {
-        
+
     }
 
     public void mouseMoved(MouseEvent e) {
