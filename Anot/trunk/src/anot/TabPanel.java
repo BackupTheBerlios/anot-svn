@@ -102,11 +102,15 @@ public abstract class TabPanel extends javax.swing.JPanel {
 
         dateLabel.setText("Date");
 
+        titleTextField.setToolTipText("The title");
+
         dateTextField.setText("yyyy-mm-dd");
+        dateTextField.setToolTipText("The date of the activity, formatted as yyyy-mm-dd");
 
         timeLabel.setText("Time");
 
         timeTextField.setText("hh:mm:ss");
+        timeTextField.setToolTipText("The time of the activity, formatted as hh:mm:ss");
 
         subjectLabel.setText("Subject");
 
@@ -114,11 +118,14 @@ public abstract class TabPanel extends javax.swing.JPanel {
 
         descriptionTextArea.setColumns(20);
         descriptionTextArea.setRows(5);
+        descriptionTextArea.setToolTipText("A description of this activity");
         jScrollPane1.setViewportView(descriptionTextArea);
 
         positiveButton.setText("Tjotta");
 
         negativeButton.setText("Bläng");
+
+        subjectTextField.setToolTipText("Classifies this activity as part of a subject");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
