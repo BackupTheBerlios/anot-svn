@@ -11,6 +11,7 @@ import java.util.*;
  */
 public class ActivityStore {
 
+    String filename;
     LinkedList<Activity> activities;
     Activity selectedActivity;
     LinkedList<ActionListener> listeners;
@@ -18,7 +19,8 @@ public class ActivityStore {
     Comparator<Activity> comparator;
     boolean reverseSort;
 
-    public ActivityStore() {
+    public ActivityStore(String filename) {
+        this.filename = filename;
         activities = new LinkedList<Activity>();
         selectedActivity = null;
         listeners = new LinkedList<ActionListener>();
@@ -89,7 +91,7 @@ public class ActivityStore {
         activities.addLast(a);
         sortActivities();
     }
-    
+
     public void removeActivity(Activity a) {
         if (a == selectedActivity) {
             setSelectedActivity(null);
@@ -97,7 +99,7 @@ public class ActivityStore {
         activities.remove(a);
         notifyListeners();
     }
-    
+
     public void modifiyActivity(Activity a) {
         sortActivities();
         if (a == selectedActivity) {
@@ -131,6 +133,16 @@ public class ActivityStore {
 
     public int getSize() {
         return activities.size();
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void save() {
+        if (!filename.isEmpty()) {
+            ActivityStoreBuilder.saveActivityStoreToFile(this, filename);
+        }
     }
 
     @Override

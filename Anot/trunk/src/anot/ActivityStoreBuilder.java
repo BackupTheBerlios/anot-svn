@@ -59,7 +59,8 @@ public class ActivityStoreBuilder {
         }
 
         if (document != null) {
-            as = getActivityStore(document);
+            as = new ActivityStore(filename);
+            getActivityStore(as, document);
         }
         return as;
     }
@@ -74,14 +75,14 @@ public class ActivityStoreBuilder {
         Document document = openXMLDocument(ClassLoader.getSystemResourceAsStream(filename),
                 new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
         if (document != null) {
-            as = getActivityStore(document);
+            as = new ActivityStore("");
+            getActivityStore(as, document);
         }
         return as;
     }
 
-    protected static ActivityStore getActivityStore(Document document) {
+    protected static void getActivityStore(ActivityStore as, Document document) {
 
-        ActivityStore as = new ActivityStore();
         NodeList nodes = document.getElementsByTagName("activity");
         for (int i = 0; i < nodes.getLength(); i++) {
             Activity activity = getActivity(nodes.item(i));
@@ -89,7 +90,6 @@ public class ActivityStoreBuilder {
                 as.addActivity(activity);
             }
         }
-        return as;
     }
 
     protected static Activity getActivity(Node node) {
@@ -260,7 +260,6 @@ public class ActivityStoreBuilder {
     as = getActivityStore(document);
     }
     }*/
-    
     protected static void writeXMLDocument(ActivityStore as, OutputStream os) {
         try {
             // create a document and add a root element with appropriate 
