@@ -7,7 +7,8 @@
     <xsd:element name="activity-store">
         <xsd:complexType>
             <xsd:choice maxOccurs="unbounded" minOccurs="0">
-                <xsd:element name="activity" type="tns:activityType"></xsd:element>
+                <xsd:element name="activity" type="tns:activityType" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+                <xsd:element name="sort" type="tns:sortType" minOccurs="0"></xsd:element>
             </xsd:choice>
         </xsd:complexType>
     </xsd:element>
@@ -15,8 +16,13 @@
         <xsd:choice maxOccurs="unbounded">
             <xsd:element name="description" type="xsd:string"></xsd:element>
             <xsd:element name="date" type="xsd:dateTime"></xsd:element>
+            <xsd:element name="color" type="xsd:string"></xsd:element>
         </xsd:choice>
         <xsd:attribute name="title" type="xsd:string" use="required"/>
         <xsd:attribute name="subject" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    <xsd:complexType name="sortType">
+        <xsd:attribute name="type" type="xsd:string"/>
+        <xsd:attribute name="reverse" type="xsd:boolean"/>
     </xsd:complexType>
 </xsd:schema>

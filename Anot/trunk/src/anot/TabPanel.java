@@ -12,26 +12,31 @@ import javax.swing.*;
 import java.util.*;
 
 /**
- *
- * @author  tgwizard
+ * @author William Lundin Forssén <shazmodan@gmail.com>
+ * @author Adam Renberg <twizard@gmail.com>
  */
 public abstract class TabPanel extends javax.swing.JPanel {
 
     protected SimpleDateFormat dateTimeFormat =
-            new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
+            new SimpleDateFormat("yyyy-MM-ddHH:mm");
     private ActivityStore activityStore;
+    
+    protected Color color;
 
     /** Creates new form TabPanel */
     public TabPanel() {
+        color = new Color(10, 240, 210);
+        
         initComponents();
 
         setFocusCycleRoot(true);
-        Vector<Component> v = new Vector<Component>(7);
+        Vector<Component> v = new Vector<Component>(8);
         v.add(titleTextField);
         v.add(dateTextField);
         v.add(timeTextField);
         v.add(subjectTextField);
         v.add(descriptionTextArea);
+        v.add(colorChooserButton);
         v.add(positiveButton);
         v.add(negativeButton);
         setFocusTraversalPolicy(new MyOwnFocusTraversalPolicy(v));
@@ -64,6 +69,23 @@ public abstract class TabPanel extends javax.swing.JPanel {
         dateTextField.addKeyListener(enterInvokesPositive);
         timeTextField.addKeyListener(enterInvokesPositive);
         subjectTextField.addKeyListener(enterInvokesPositive);
+
+        Icon icon = new Icon() {
+
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                g.setColor(color);
+                g.fillRect(0, 0, getIconWidth(), getIconHeight());
+            }
+
+            public int getIconWidth() {
+                return colorLabel.getWidth();
+            }
+
+            public int getIconHeight() {
+                return colorLabel.getHeight();
+            }
+        };
+        colorLabel.setIcon(icon);
     }
 
     protected ActivityStore getActivityStore() {
@@ -97,6 +119,8 @@ public abstract class TabPanel extends javax.swing.JPanel {
         positiveButton = new javax.swing.JButton();
         negativeButton = new javax.swing.JButton();
         subjectTextField = new javax.swing.JTextField();
+        colorChooserButton = new javax.swing.JButton();
+        colorLabel = new javax.swing.JLabel();
 
         titleLabel.setText("Title");
 
@@ -109,8 +133,8 @@ public abstract class TabPanel extends javax.swing.JPanel {
 
         timeLabel.setText("Time");
 
-        timeTextField.setText("hh:mm:ss");
-        timeTextField.setToolTipText("The time of the activity, formatted as hh:mm:ss");
+        timeTextField.setText("hh:mm");
+        timeTextField.setToolTipText("The time of the activity, formatted as hh:mm");
 
         subjectLabel.setText("Subject");
 
@@ -127,39 +151,48 @@ public abstract class TabPanel extends javax.swing.JPanel {
 
         subjectTextField.setToolTipText("Classifies this activity as part of a subject");
 
+        colorChooserButton.setBackground(new java.awt.Color(224, 123, 21));
+        colorChooserButton.setText("Choose Color...");
+
+        colorLabel.setBackground(new java.awt.Color(230, 123, 17));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(titleLabel)
-                            .addComponent(dateLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dateTextField)
-                            .addComponent(titleTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(timeLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(timeTextField)))
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(titleLabel)
+                                .addComponent(dateLabel))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(titleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(timeLabel)
+                            .addGap(12, 12, 12)
+                            .addComponent(timeTextField)))
+                    .addComponent(colorChooserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(subjectLabel)
-                    .addComponent(descriptionLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(descriptionLabel)
+                    .addComponent(colorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(negativeButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(positiveButton))
-                    .addComponent(subjectTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                            .addComponent(subjectTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -169,28 +202,36 @@ public abstract class TabPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(titleLabel)
                     .addComponent(titleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(subjectTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(subjectLabel))
+                    .addComponent(subjectLabel)
+                    .addComponent(subjectTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(positiveButton)
+                            .addComponent(negativeButton)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(dateLabel)
-                            .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(descriptionLabel))
+                            .addComponent(descriptionLabel)
+                            .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(timeLabel)
-                            .addComponent(timeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(positiveButton)
-                    .addComponent(negativeButton))
+                            .addComponent(timeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(colorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(colorChooserButton, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JButton colorChooserButton;
+    protected javax.swing.JLabel colorLabel;
     protected javax.swing.JLabel dateLabel;
     protected javax.swing.JTextField dateTextField;
     protected javax.swing.JLabel descriptionLabel;

@@ -2,6 +2,8 @@
  */
 package anot;
 
+import java.awt.Color;
+
 import java.util.*;
 
 /**
@@ -14,20 +16,19 @@ public class Activity {
     private String description;
     private String subject;
     private Date date;
+    private Color color;
 
     public Activity(String title) {
         this.title = title;
+        color = Color.white;
     }
     
-    public Activity(String title, String subject, String description, Date date) {
-        set(title, subject, description, date);
-    }
-    
-    public void set(String title, String subject, String description, Date date) {
+    public void set(String title, String subject, String description, Date date, Color color) {
         this.title = title;
         this.subject = subject;
         this.description = description;
         this.date = date;
+        this.color = color;
     }
 
     public String getTitle() {
@@ -65,4 +66,14 @@ public class Activity {
     public String toString() {
         return "(" + title + ":" + date + ":" + subject + ")";
     }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+    
+    
 }

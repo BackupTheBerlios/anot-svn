@@ -9,8 +9,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
- *
- * @author  tgwizard
+ * @author William Lundin Forssén <shazmodan@gmail.com>
+ * @author Adam Renberg <tgwizard@gmail.com>
  */
 public class Frame extends javax.swing.JFrame {
 
@@ -50,7 +50,23 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         
+        aboutMenuItem.addActionListener(new ActionListener() {
 
+            public void actionPerformed(ActionEvent e) {
+                //TODO: Pop-Up Description about the program.
+            }
+            
+        });
+        
+        helpMenuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+               //TODO: Pop-Up help!! YEAH!
+            }
+            
+        });
+        
+        
         //TODO: error handling, popup-window etc.
         activityStore = ActivityStoreBuilder.loadActivityStoreFromFile("data/activities.xml");
         
@@ -131,6 +147,7 @@ public class Frame extends javax.swing.JFrame {
         helpMenu.setMnemonic('H');
         helpMenu.setText("Help");
 
+        helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         helpMenuItem.setMnemonic('H');
         helpMenuItem.setText("Help");
         helpMenu.add(helpMenuItem);

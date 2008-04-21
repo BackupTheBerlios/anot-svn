@@ -2,6 +2,7 @@
  */
 package anot;
 
+import java.awt.Color;
 import java.io.*;
 
 import javax.xml.XMLConstants;
@@ -24,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * 
+ * @author William Lundin Forssén <shazmodan@gmail.com>
  * @author Adam Renberg <tgwizard@gmail.com>
  */
 public class ActivityStoreBuilder {
@@ -82,8 +83,21 @@ public class ActivityStoreBuilder {
     }
 
     protected static void getActivityStore(ActivityStore as, Document document) {
-
-        NodeList nodes = document.getElementsByTagName("activity");
+        NodeList nodes = document.getElementsByTagName("sort");
+        if (nodes.getLength() != 0) {
+            Node node = nodes.item(0);
+            String type = node.getAttributes().getNamedItem("type").getTextContent();
+            boolean reverse = Boolean.parseBoolean(node.getAttributes().getNamedItem("reverse").getTextContent());
+            
+            as.setReverseSort(reverse);
+            
+            if (type.equals("date")) {
+                as.sortActivites(ActivityStore.createDateComparator());
+            } else if (type.equals("subject")) {
+                as.sortActivites(ActivityStore.createSubjectComparator());
+            }
+        }
+        nodes = document.getElementsByTagName("activity");
         for (int i = 0; i < nodes.getLength(); i++) {
             Activity activity = getActivity(nodes.item(i));
             if (activity != null) {
@@ -115,6 +129,9 @@ public class ActivityStoreBuilder {
                     }
                 } else if (child.getNodeName().equals("description")) {
                     activity.setDescription(parseRichText(child.getTextContent()));
+                } else if(child.getNodeName().equals("color")){
+                    // beware of the negative sign!! 
+                    activity.setColor(new Color(-Integer.parseInt(child.getTextContent(), 16)));
                 }
             } while ((child = child.getNextSibling()) != null);
         }
@@ -276,6 +293,11 @@ public class ActivityStoreBuilder {
             rootElement.setAttribute("xsi:schemaLocation",
                     "http://anot.berlios.de/schema/activitiesSchema activitiesSchema.xsd");
 
+            Element sortElement = document.createElement("sort");
+            sortElement.setAttribute("reverse", Boolean.toString(as.isReverseSort()));
+            sortElement.setAttribute("type", as.getSortComparator().getType());
+            rootElement.appendChild(sortElement);
+            
             Iterator<Activity> i = as.iterator();
             while (i.hasNext()) {
                 addActivity(document, i.next());
@@ -327,5 +349,13 @@ public class ActivityStoreBuilder {
         Element descriptionElement = document.createElement("description");
         descriptionElement.setTextContent(activity.getDescription());
         activityElement.appendChild(descriptionElement);
+        
+        Element colorElement = document.createElement("color");
+        String s = Integer.toHexString(Math.abs((activity.getColor().getRGB())));
+        for (int i = 6; i > s.length(); i--) {
+            s = "0" + s;
+        }
+        colorElement.setTextContent(s);
+        activityElement.appendChild(colorElement);
     }
 }

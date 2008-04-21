@@ -6,7 +6,7 @@ import java.awt.event.*;
 import java.util.*;
 
 /**
- * 
+ * @author William Lundin Forssén <shazmodan@gmail.com>
  * @author Adam Renberg <tgwizard@gmail.com>
  */
 public class ActivityStore {
@@ -16,7 +16,7 @@ public class ActivityStore {
     Activity selectedActivity;
     LinkedList<ActionListener> listeners;
     LinkedList<ActionListener> selectionListeners;
-    Comparator<Activity> comparator;
+    SortComparator sortComparator;
     boolean reverseSort;
 
     public ActivityStore(String filename) {
@@ -25,12 +25,7 @@ public class ActivityStore {
         selectedActivity = null;
         listeners = new LinkedList<ActionListener>();
         selectionListeners = new LinkedList<ActionListener>();
-        comparator = new Comparator<Activity>() {
-
-            public int compare(Activity o1, Activity o2) {
-                return o1.getDate().compareTo(o2.getDate());
-            }
-        };
+        sortComparator = createDateComparator();
     }
 
     protected void notifyListeners() {
@@ -72,9 +67,14 @@ public class ActivityStore {
         notifySelectionListeners();
     }
 
-    public void sortActivites(Comparator<Activity> comparator) {
-        this.comparator = comparator;
+    public SortComparator getSortComparator() {
+        return sortComparator;
+    }
+
+    public void sortActivites(SortComparator comparator) {
+        this.sortComparator = comparator;
         sortActivities();
+        save();
     }
 
     public boolean isReverseSort() {
@@ -82,14 +82,15 @@ public class ActivityStore {
     }
 
     public void setReverseSort(boolean reverseSort) {
-
         this.reverseSort = reverseSort;
         sortActivities();
+        save();
     }
 
     public void addActivity(Activity a) {
         activities.addLast(a);
         sortActivities();
+        save();
     }
 
     public void removeActivity(Activity a) {
@@ -98,6 +99,7 @@ public class ActivityStore {
         }
         activities.remove(a);
         notifyListeners();
+        save();
     }
 
     public void modifiyActivity(Activity a) {
@@ -105,16 +107,18 @@ public class ActivityStore {
         if (a == selectedActivity) {
             setSelectedActivity(a);
         }
+        save();
     }
 
     protected void sortActivities() {
-        if (comparator != null) {
-            Collections.sort(activities, comparator);
+        if (sortComparator != null) {
+            Collections.sort(activities, sortComparator);
         }
         if (reverseSort) {
             Collections.reverse(activities);
         }
         notifyListeners();
+        save();
     }
 
     public Iterator<Activity> iterator() {
@@ -133,6 +137,10 @@ public class ActivityStore {
 
     public int getSize() {
         return activities.size();
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getFilename() {
@@ -154,5 +162,41 @@ public class ActivityStore {
         }
         sb.setLength(sb.length() - 1);
         return sb.toString();
+    }
+
+    public static SortComparator createDateComparator() {
+        return new SortComparator() {
+
+            public int compare(Activity o1, Activity o2) {
+                return o1.getDate().compareTo(o2.getDate());
+            }
+
+            @Override
+            public String getType() {
+                return "date";
+            }
+        };
+    }
+
+    public static SortComparator createSubjectComparator() {
+        return new SortComparator() {
+
+            public int compare(Activity o1, Activity o2) {
+                int ret = o1.getSubject().compareTo(o2.getSubject());
+                if (ret == 0) {
+                    return o1.getDate().compareTo(o2.getDate());
+                }
+                return ret;
+            }
+
+            @Override
+            public String getType() {
+                return "subject";
+            }
+        };
+    }
+    
+    public static abstract class SortComparator implements Comparator<Activity> {
+        public abstract String getType();
     }
 }

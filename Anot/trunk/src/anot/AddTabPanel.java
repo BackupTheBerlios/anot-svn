@@ -4,13 +4,15 @@
  */
 package anot;
 
+import java.awt.*;
 import java.awt.event.*;
 import java.text.ParseException;
 import java.util.*;
+import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
 
 /**
- * 
+ * @author William Lundin Forssén <shazmodan@gmail.com>
  * @author Adam Renberg <tgwizard@gmail.com>
  */
 public class AddTabPanel extends TabPanel {
@@ -29,10 +31,10 @@ public class AddTabPanel extends TabPanel {
                     String description = descriptionTextArea.getText().trim();
 
                     //if title or subject or description = empty
-                    if (titleTextField.getText().equals((String) "") || subjectTextField.getText().equals((String) "") || descriptionTextArea.getText().equals((String) "")) {
-                        JOptionPane popup = new JOptionPane();
+                    if (title.isEmpty() ||subject.isEmpty() || description.isEmpty()) {
                         //error
-                        JOptionPane.showMessageDialog(popup, "Please fill out all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Please fill out all fields.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
@@ -42,7 +44,8 @@ public class AddTabPanel extends TabPanel {
                             timeTextField.getText().trim());
 
                     if (Calendar.getInstance().getTime().after(date)) {
-                        //TODO: popup
+                        JOptionPane.showMessageDialog(null, "Activity must be in the future.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
@@ -50,12 +53,14 @@ public class AddTabPanel extends TabPanel {
                     a.setSubject(subject);
                     a.setDescription(description);
                     a.setDate(date);
+                    a.setColor(color);
 
                     getActivityStore().addActivity(a);
                     getActivityStore().setSelectedActivity(a);
 
                 } catch (ParseException ex) {
-                //TODO: popup
+                    JOptionPane.showMessageDialog(null, "Please format date as (yyyy-mm-dd) and time as (hh:mm).",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -71,8 +76,18 @@ public class AddTabPanel extends TabPanel {
                 subjectTextField.setText("");
                 descriptionTextArea.setText("");
                 dateTextField.setText("yyyy-mm-dd");
-                timeTextField.setText("hh:mm:ss");
+                timeTextField.setText("hh:mm");
 
+            }
+        });
+        
+        colorChooserButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                Activity a = getActivityStore().getSelectedActivity();
+                color = JColorChooser.showDialog(null, "Chose Activity Color",
+                        color);
+                colorLabel.repaint();
             }
         });
     }

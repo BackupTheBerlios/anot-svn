@@ -4,6 +4,9 @@
  */
 package anot;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.event.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
- * 
+ * @author William Lundin Forssén <shazmodan@gmail.com>
  * @author Adam Renberg <tgwizard@gmail.com>
  */
 public class ViewTabPanel extends TabPanel {
@@ -21,7 +24,7 @@ public class ViewTabPanel extends TabPanel {
     protected SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd");
     protected SimpleDateFormat timeFormat =
-            new SimpleDateFormat("HH:mm:ss");
+            new SimpleDateFormat("HH:mm");
 
     public ViewTabPanel() {
 
@@ -35,11 +38,19 @@ public class ViewTabPanel extends TabPanel {
                     String title = titleTextField.getText().trim();
                     String subject = subjectTextField.getText().trim();
                     String description = descriptionTextArea.getText().trim();
+                    
+                    if (title.isEmpty() ||subject.isEmpty() || description.isEmpty()) {
+                        //error
+                        JOptionPane.showMessageDialog(null, "Please fill out all fields.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
 
                     Date date = dateTimeFormat.parse(dateTextField.getText().trim() + timeTextField.getText().trim());
 
                     if (Calendar.getInstance().getTime().after(date)) {
-                        //TODO: popup
+                        JOptionPane.showMessageDialog(null, "Activity must be in the future.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
@@ -48,10 +59,12 @@ public class ViewTabPanel extends TabPanel {
                     a.setSubject(subject);
                     a.setDescription(description);
                     a.setDate(date);
+                    a.setColor(color);
 
                     getActivityStore().modifiyActivity(a);
                 } catch (ParseException ex) {
-                    //
+                    JOptionPane.showMessageDialog(null, "Please format date as (yyyy-mm-dd) and time as (hh:mm).",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -77,6 +90,16 @@ public class ViewTabPanel extends TabPanel {
                 }
             }
         });
+
+        colorChooserButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                Activity a = getActivityStore().getSelectedActivity();
+                color = JColorChooser.showDialog(null, "Chose Activity Color",
+                        color);
+                colorLabel.repaint();
+            }
+        });
     }
 
     @Override
@@ -98,7 +121,9 @@ public class ViewTabPanel extends TabPanel {
 
                 dateTextField.setText(dateFormat.format(a.getDate()));
                 timeTextField.setText(timeFormat.format(a.getDate()));
-
+                
+                color = new Color(a.getColor().getRGB());
+                colorLabel.repaint();
             }
         });
     //this.activityStore.addListener(this);
