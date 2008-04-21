@@ -156,15 +156,14 @@ public class DiagramPanel extends JPanel implements MouseListener,
         g.fillRect(0, 0, getWidth(), getHeight());
 
         Color color = Color.white;
-        /*int increment = getHeight() / 30;
-        for (int i = 0; i < getHeight(); i += increment) {
-        g.setColor(color);
-        g.fillRect(0, i, getWidth(), increment);
-        color = new Color(color.getRed() - 3, color.getGreen() - 3, color.getBlue() - 2);
-        }*/
-
-        Iterator<Activity> i = activityStore.iterator();
-        int p = 0;
+        
+        if (activityStore.getSize() == 0) {
+            g.setColor(Color.gray);
+            String s = "Please add activities from below.";
+            int w = g.getFontMetrics(font).stringWidth(s);
+            g.drawString(s, getWidth()/2-w/2, getHeight()/2);
+            return;
+        }
 
         long nowTime = Calendar.getInstance().getTime().getTime();
 
@@ -181,17 +180,19 @@ public class DiagramPanel extends JPanel implements MouseListener,
             drawGrade(g, "" + (int) (nDays / 2), (int) (nDays / 2), pixelsPerDay);
             drawGrade(g, "" + (int) (nDays / 3), (int) (nDays / 3), pixelsPerDay);
         } else*/ 
-        if (nDays < 13) {
-            drawGrade(g, "" + (int) (nDays - nDays / 3), (int) (nDays - nDays / 3), pixelsPerDay);
-            drawGrade(g, "" + (int) (nDays / 3), (int) (nDays / 3), pixelsPerDay);
-        } else {
+        if (nDays > 3) {
             drawGrade(g, "" + (int) (nDays - nDays / 4), (int) (nDays - nDays / 4), pixelsPerDay);
             drawGrade(g, "" + (int) (nDays / 2), (int) (nDays / 2), pixelsPerDay);
             drawGrade(g, "" + (int) (nDays / 4), (int) (nDays / 4), pixelsPerDay);
+        } else {
+            for (int i = 0; i < nDays; i++) {
+                drawGrade(g, "" + i, i, pixelsPerDay);
+            }
         }
-        
-        System.out.println(nDays);
 
+        Iterator<Activity> i = activityStore.iterator();
+        int p = 0;
+        
         while (i.hasNext()) {
             Activity a = i.next();
 
