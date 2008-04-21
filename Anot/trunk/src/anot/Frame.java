@@ -68,7 +68,7 @@ public class Frame extends javax.swing.JFrame {
         
         
         //TODO: error handling, popup-window etc.
-        activityStore = ActivityStoreBuilder.loadActivityStoreFromFile("data/activities.xml");
+        activityStore = ActivityStoreBuilder.loadActivityStoreFromFile("activities.xml");
         
         
         DiagramPanel diagramPanel = new DiagramPanel();
