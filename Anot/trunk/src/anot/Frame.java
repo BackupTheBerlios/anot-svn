@@ -6,6 +6,7 @@
 package anot;
 
 import java.awt.event.*;
+import java.io.FileNotFoundException;
 import javax.swing.*;
 
 /**
@@ -40,7 +41,7 @@ public class Frame extends javax.swing.JFrame {
 
     /** Creates new form Frame */
     public Frame() {
-        
+
         initComponents();
 
         quitMenuItem.addActionListener(new ActionListener() {
@@ -49,35 +50,44 @@ public class Frame extends javax.swing.JFrame {
                 System.exit(0);
             }
         });
-        
+
         aboutMenuItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                //TODO: Pop-Up Description about the program.
+            //TODO: Pop-Up Description about the program.
             }
-            
         });
-        
+
         helpMenuItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-               //TODO: Pop-Up help!! YEAH!
+            //TODO: Pop-Up help!! YEAH!
             }
-            
         });
-        
-        
+
+
         //TODO: error handling, popup-window etc.
-        activityStore = ActivityStoreBuilder.loadActivityStoreFromFile("activities.xml");
-        
-        
+        try {
+            activityStore = ActivityStoreBuilder.loadActivityStoreFromFile("activities.xml");
+        } catch (FileNotFoundException e) {
+            // do nothing
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "There are errors in the xml-data file. Please correct them (or remove the file):\n"
+                    + e.getMessage(), "Errors in xml-file", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        } finally {
+            if (activityStore == null) {
+                activityStore = new ActivityStore("activities.xml");
+            }
+        }
+
         DiagramPanel diagramPanel = new DiagramPanel();
         diagramPanel.setActivityStore(activityStore);
         scrollPane.setViewportView(diagramPanel);
-        
+
         addTabPanel.setActivityStore(activityStore);
         viewTabPanel.setActivityStore(activityStore);
-        
+
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
         tabbedPane.setToolTipTextAt(0, "Add Tab (Alt+1)");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);

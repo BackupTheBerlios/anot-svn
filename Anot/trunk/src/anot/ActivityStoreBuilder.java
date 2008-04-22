@@ -38,7 +38,8 @@ public class ActivityStoreBuilder {
      * @param filename Path to the file to be loaded.
      * @return An {@link ActivityStore} representing the file.
      */
-    public static ActivityStore loadActivityStoreFromFile(String filename) {
+    public static ActivityStore loadActivityStoreFromFile(String filename)
+            throws FileNotFoundException, Exception {
         ActivityStore as = null;
         Document document = null;
         FileInputStream fis = null;
@@ -46,9 +47,14 @@ public class ActivityStoreBuilder {
             fis = new FileInputStream(filename);
             document = openXMLDocument(new BufferedInputStream(fis),
                     new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
-        } catch (Exception e) {
-            System.err.println("Exception in FileInputStream stuff");
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found!");
             System.err.println(e);
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Exception blah");
+            System.err.println(e);
+            throw e;
         } finally {
             if (fis != null) {
                 try {
@@ -71,10 +77,18 @@ public class ActivityStoreBuilder {
      * @param filename Path to the file to be loaded.
      * @return An {@link ActivityStore} representing the file.
      */
-    public static ActivityStore loadActivityStoreFromJar(String filename) {
+    public static ActivityStore loadActivityStoreFromJar(String filename) throws Exception {
         ActivityStore as = null;
-        Document document = openXMLDocument(ClassLoader.getSystemResourceAsStream(filename),
-                new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
+        Document document = null;
+        try {
+            document = openXMLDocument(ClassLoader.getSystemResourceAsStream(filename),
+                    new StreamSource(ClassLoader.getSystemResourceAsStream("activitiesSchema.xsd")));
+
+        } catch (Exception e) {
+            System.err.println("Exception blah");
+            System.err.println(e);
+            throw e;
+        }
         if (document != null) {
             as = new ActivityStore("");
             getActivityStore(as, document);
@@ -88,9 +102,9 @@ public class ActivityStoreBuilder {
             Node node = nodes.item(0);
             String type = node.getAttributes().getNamedItem("type").getTextContent();
             boolean reverse = Boolean.parseBoolean(node.getAttributes().getNamedItem("reverse").getTextContent());
-            
+
             as.setReverseSort(reverse);
-            
+
             if (type.equals("date")) {
                 as.sortActivites(ActivityStore.createDateComparator());
             } else if (type.equals("subject")) {
@@ -129,7 +143,7 @@ public class ActivityStoreBuilder {
                     }
                 } else if (child.getNodeName().equals("description")) {
                     activity.setDescription(parseRichText(child.getTextContent()));
-                } else if(child.getNodeName().equals("color")){
+                } else if (child.getNodeName().equals("color")) {
                     // beware of the negative sign!! 
                     activity.setColor(new Color(-Integer.parseInt(child.getTextContent(), 16)));
                 }
@@ -168,7 +182,7 @@ public class ActivityStoreBuilder {
      * @param schema The Source for a schema. Can be null, and thus ignored.
      * @return The opened and validated xml-file in a DOM-structure.
      */
-    protected static Document openXMLDocument(InputStream file, Source schema) {
+    protected static Document openXMLDocument(InputStream file, Source schema) throws Exception {
         Document document = null;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -222,24 +236,25 @@ public class ActivityStoreBuilder {
                         }
                     });
             document = builder.parse(file);
-        } catch (SAXException sxe) {
+        } catch (SAXException e) {
             // Error generated during parsing
-            System.err.println(sxe);
-            Exception x = sxe;
-            if (sxe.getException() != null) {
-                x = sxe.getException();
+            System.err.println(e);
+            Exception x = e;
+            if (e.getException() != null) {
+                x = e.getException();
             }
             x.printStackTrace();
-
-        } catch (ParserConfigurationException pce) {
+            throw e;
+        } catch (ParserConfigurationException e) {
             // Parser with specified options can't be built
-            System.err.println(pce);
-            pce.printStackTrace();
-
-        } catch (IOException ioe) {
+            System.err.println(e);
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
             // I/O error
-            System.err.println(ioe.getMessage());
-            ioe.printStackTrace();
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+            throw e;
         } // try-catch
         return document;
     }
@@ -297,7 +312,7 @@ public class ActivityStoreBuilder {
             sortElement.setAttribute("reverse", Boolean.toString(as.isReverseSort()));
             sortElement.setAttribute("type", as.getSortComparator().getType());
             rootElement.appendChild(sortElement);
-            
+
             Iterator<Activity> i = as.iterator();
             while (i.hasNext()) {
                 addActivity(document, i.next());
@@ -349,7 +364,7 @@ public class ActivityStoreBuilder {
         Element descriptionElement = document.createElement("description");
         descriptionElement.setTextContent(activity.getDescription());
         activityElement.appendChild(descriptionElement);
-        
+
         Element colorElement = document.createElement("color");
         String s = Integer.toHexString(Math.abs((activity.getColor().getRGB())));
         for (int i = 6; i > s.length(); i--) {
