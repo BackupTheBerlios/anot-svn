@@ -166,7 +166,7 @@ public class ActivityStoreBuilder {
             builder.append(" ");
         }
         String ret = builder.toString();
-        ret = ret.replace("<br/> ", "\n");
+        ret = ret.replace("<br/>", "\n");
         ret = ret.trim();
         return ret;
     }
