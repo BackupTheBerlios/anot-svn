@@ -5,6 +5,7 @@
  */
 package anot;
 
+import java.awt.Component;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 import javax.swing.*;
@@ -108,6 +109,58 @@ public class Frame extends javax.swing.JFrame {
 
             }
         });
+        
+        ButtonGroup group = new ButtonGroup();
+
+        sortByDateMenuItem = new JRadioButtonMenuItem("Sort by date");
+        group.add(sortByDateMenuItem);
+        sortByDateMenuItem.setSelected(ActivityStore.createDateComparator().getType().equals(
+                activityStore.getSortComparator().getType()));
+        sortByDateMenuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                activityStore.sortActivites(ActivityStore.createDateComparator());
+            }
+        });
+        sortMenu.add(sortByDateMenuItem);
+
+        sortBySubjectMenuItem = new JRadioButtonMenuItem("Sort by subject");
+        group.add(sortBySubjectMenuItem);
+        sortBySubjectMenuItem.setSelected(ActivityStore.createSubjectComparator().getType().equals(
+                activityStore.getSortComparator().getType()));
+        sortBySubjectMenuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                activityStore.sortActivites(ActivityStore.createSubjectComparator());
+            }
+        });
+        sortMenu.add(sortBySubjectMenuItem);
+
+        sortMenu.add(new JPopupMenu.Separator());
+
+        reverseSortMenuItem = new JCheckBoxMenuItem("Reverse sort");
+        reverseSortMenuItem.setState(activityStore.isReverseSort());
+        reverseSortMenuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (activityStore.isReverseSort()) {
+                    activityStore.setReverseSort(false);
+                } else {
+                    activityStore.setReverseSort(true);
+                }
+            }
+        });
+        sortMenu.add(reverseSortMenuItem);
+        
+        /*JPopupMenu popup = new JPopupMenu();
+        
+        Component[] cs = sortMenu.getComponents();
+        
+        for (Component c : cs)
+            popup.add(c);
+        popup.validate();*/
+        diagramPanel.setPopupMenu(sortMenu.getPopupMenu());
+        
     }
 
     /** This method is called from within the constructor to
@@ -125,6 +178,7 @@ public class Frame extends javax.swing.JFrame {
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         quitMenuItem = new javax.swing.JMenuItem();
+        sortMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
         helpMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
@@ -153,6 +207,10 @@ public class Frame extends javax.swing.JFrame {
         fileMenu.add(quitMenuItem);
 
         menuBar.add(fileMenu);
+
+        sortMenu.setMnemonic('S');
+        sortMenu.setText("Sort");
+        menuBar.add(sortMenu);
 
         helpMenu.setMnemonic('H');
         helpMenu.setText("Help");
@@ -183,7 +241,12 @@ public class Frame extends javax.swing.JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem quitMenuItem;
     protected javax.swing.JScrollPane scrollPane;
+    private javax.swing.JMenu sortMenu;
     private javax.swing.JTabbedPane tabbedPane;
     private anot.ViewTabPanel viewTabPanel;
     // End of variables declaration//GEN-END:variables
+
+    private JCheckBoxMenuItem reverseSortMenuItem;
+    private JRadioButtonMenuItem sortByDateMenuItem;
+    private JRadioButtonMenuItem sortBySubjectMenuItem;
 }

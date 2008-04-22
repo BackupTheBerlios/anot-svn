@@ -105,6 +105,7 @@ public class ActivityStoreBuilder {
 
             as.setReverseSort(reverse);
 
+            // should be some type of factory with prototypes and such
             if (type.equals("date")) {
                 as.sortActivites(ActivityStore.createDateComparator());
             } else if (type.equals("subject")) {

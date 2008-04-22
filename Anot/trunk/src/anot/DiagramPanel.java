@@ -21,9 +21,6 @@ public class DiagramPanel extends JPanel implements MouseListener,
     ActivityStore activityStore;
     //...where instance variables are declared:
     JPopupMenu popup;
-    JCheckBoxMenuItem reverseSortMenuItem;
-    JRadioButtonMenuItem sortByDateMenuItem;
-    JRadioButtonMenuItem sortBySubjectMenuItem;
     int x = -1;
     int y = -1;
     private int stapleWidth = 35;
@@ -39,66 +36,44 @@ public class DiagramPanel extends JPanel implements MouseListener,
 
         font = new Font("Verdana", Font.BOLD, 10);
 
-        popup = new JPopupMenu();
-        ButtonGroup group = new ButtonGroup();
-
-
-        sortByDateMenuItem = new JRadioButtonMenuItem("Sort by date");
-        
-        group.add(sortByDateMenuItem);
-        sortByDateMenuItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                activityStore.sortActivites(ActivityStore.createDateComparator());
-            }
-        });
-        popup.add(sortByDateMenuItem);
-
-        sortBySubjectMenuItem = new JRadioButtonMenuItem("Sort by subject");
-        
-        group.add(sortBySubjectMenuItem);
-        sortBySubjectMenuItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                activityStore.sortActivites(ActivityStore.createSubjectComparator());
-            }
-        });
-        popup.add(sortBySubjectMenuItem);
-
-        popup.add(new JPopupMenu.Separator());
-
-        reverseSortMenuItem = new JCheckBoxMenuItem("Reverse sort");
-        
-        reverseSortMenuItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (activityStore.isReverseSort()) {
-                    activityStore.setReverseSort(false);
-                } else {
-                    activityStore.setReverseSort(true);
-                }
-            }
-        });
-        popup.add(reverseSortMenuItem);
+        popup = null;
 
         //Add listener to components that can bring up popup menus.
         addMouseListener(new MouseAdapter() {
 
+            @Override
             public void mousePressed(MouseEvent e) {
                 maybeShowPopup(e);
             }
 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 maybeShowPopup(e);
             }
 
             private void maybeShowPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
+                if (e.isPopupTrigger() && popup != null) {
+                    // the switch of invokers is to make the menu work both
+                    // in the frame and as a popup here
+                    Component invoker = popup.getInvoker();
                     popup.show(e.getComponent(),
                             e.getX(), e.getY());
+                    popup.setInvoker(invoker);
                 }
             }
         });
+        
+        // this is soooo cool
+        new javax.swing.Timer(3600 * 1000, new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                repaint();
+            }
+        }).start();
+    }
+
+    public void setPopupMenu(JPopupMenu popup) {
+        this.popup = popup;
     }
 
     protected ActivityStore getActivityStore() {
@@ -115,15 +90,7 @@ public class DiagramPanel extends JPanel implements MouseListener,
         /*if (this.activityStore != null) {
         this.activityStore.removeListener(this);
         }*/
-        
-        sortByDateMenuItem.setSelected(ActivityStore.createDateComparator().getType().equals(
-                activityStore.getSortComparator().getType()));
-        
-        sortBySubjectMenuItem.setSelected(ActivityStore.createSubjectComparator().getType().equals(
-                activityStore.getSortComparator().getType()));
-        
-        reverseSortMenuItem.setState(activityStore.isReverseSort());
-        
+
         this.activityStore = activityStore;
         this.activityStore.addListener(new ActionListener() {
 
@@ -156,30 +123,31 @@ public class DiagramPanel extends JPanel implements MouseListener,
         g.fillRect(0, 0, getWidth(), getHeight());
 
         Color color = Color.white;
-        
+
         if (activityStore.getSize() == 0) {
             g.setColor(Color.gray);
             String s = "Please add activities from below.";
             int w = g.getFontMetrics(font).stringWidth(s);
-            g.drawString(s, getWidth()/2-w/2, getHeight()/2);
+            g.drawString(s, getWidth() / 2 - w / 2, getHeight() / 2);
             return;
         }
 
         long nowTime = Calendar.getInstance().getTime().getTime();
 
-        double nDays = (activityStore.getLatestDate().getTime() - nowTime) / (double)(1000 * 60 * 60 * 24);
+        double nDays = (activityStore.getLatestDate().getTime() - nowTime) / (double) (1000 * 60 * 60 * 24);
 
-        double pixelsPerDay = ((getHeight()) / nDays);
+        double pixelsPerDay = ((getHeight() - 14) / nDays);
 
         g.setColor(Color.gray);
         g.drawLine(10, 10, 10, getHeight() - 10);
 
         /*if ((int) nDays % 3 == 0) {
-            System.out.println("llama");
-            drawGrade(g, "" + (int) (nDays - nDays / 3), (int) (nDays - nDays / 3), pixelsPerDay);
-            drawGrade(g, "" + (int) (nDays / 2), (int) (nDays / 2), pixelsPerDay);
-            drawGrade(g, "" + (int) (nDays / 3), (int) (nDays / 3), pixelsPerDay);
-        } else*/ 
+        System.out.println("llama");
+        drawGrade(g, "" + (int) (nDays - nDays / 3), (int) (nDays - nDays / 3), pixelsPerDay);
+        drawGrade(g, "" + (int) (nDays / 2), (int) (nDays / 2), pixelsPerDay);
+        drawGrade(g, "" + (int) (nDays / 3), (int) (nDays / 3), pixelsPerDay);
+        } else*/
+        drawGrade(g, "" + (int) (nDays), (int) (nDays), pixelsPerDay);
         if (nDays > 3) {
             drawGrade(g, "" + (int) (nDays - nDays / 4), (int) (nDays - nDays / 4), pixelsPerDay);
             drawGrade(g, "" + (int) (nDays / 2), (int) (nDays / 2), pixelsPerDay);
@@ -192,7 +160,7 @@ public class DiagramPanel extends JPanel implements MouseListener,
 
         Iterator<Activity> i = activityStore.iterator();
         int p = 0;
-        
+
         while (i.hasNext()) {
             Activity a = i.next();
 
@@ -206,9 +174,9 @@ public class DiagramPanel extends JPanel implements MouseListener,
             //g.fillRect(p * 40 + 10, getHeight() - 10 - (int) h * 10, 35, (int) h * 10);
             if (activityStore.getSelectedActivity() == a) {
                 Color ac = a.getColor();
-                Color c = new Color (Math.min(255, ac.getRed()+40),
-                        Math.min(255, ac.getGreen()+40),
-                        Math.min(255, ac.getBlue()+40));
+                Color c = new Color(Math.min(255, ac.getRed() + 40),
+                        Math.min(255, ac.getGreen() + 40),
+                        Math.min(255, ac.getBlue() + 40));
                 g.setColor(c);
             } else {
                 g.setColor(a.getColor());
@@ -223,6 +191,15 @@ public class DiagramPanel extends JPanel implements MouseListener,
                         (int) Math.floor(getHeight() - line));
             }
 
+            double remainingDays = (a.getDate().getTime() - nowTime) / (double) (1000 * 60 * 60 * 24);
+            String s;
+            if (remainingDays < 1.0) {
+                s = Integer.toString((int) (remainingDays * 24)) + "h";
+            } else {
+                s = Integer.toString((int) remainingDays) + "d";
+            }
+            int w = g.getFontMetrics(font).stringWidth(s);
+            g.drawString(s, p * stapleNewPos + stapleStart + stapleWidth / 2 - w / 2, getHeight() - h - 3);
 
             p++;
         }
