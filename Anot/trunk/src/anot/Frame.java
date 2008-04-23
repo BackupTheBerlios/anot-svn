@@ -55,8 +55,8 @@ public class Frame extends javax.swing.JFrame {
         aboutMenuItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-            //TODO: Pop-Up Description about the program.
-                
+                //TODO: Pop-Up Description about the program.
+
                 JOptionPane.showMessageDialog(getRootPane(),
                         "Created by:\nshazmodan & tgwizard", "About",
                         JOptionPane.INFORMATION_MESSAGE);
@@ -139,7 +139,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         sortMenu.add(sortBySubjectMenuItem);
-        
+
         sortByColorMenuItem = new JRadioButtonMenuItem("Sort by color");
         group.add(sortByColorMenuItem);
         sortByColorMenuItem.setSelected(activityStore.getSortComparator().getType().equals("color"));
