@@ -56,13 +56,20 @@ public class Frame extends javax.swing.JFrame {
 
             public void actionPerformed(ActionEvent e) {
             //TODO: Pop-Up Description about the program.
+                
+                JOptionPane.showMessageDialog(getRootPane(),
+                        "Created by:\nshazmodan & tgwizard", "About",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
         helpMenuItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-            //TODO: Pop-Up help!! YEAH!
+                //TODO: Pop-Up help!! YEAH!
+                JOptionPane.showMessageDialog(getRootPane(),
+                        "Jedi says: You don't need any help...", "Help",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -71,10 +78,9 @@ public class Frame extends javax.swing.JFrame {
         try {
             activityStore = ActivityStoreBuilder.loadActivityStoreFromFile("activities.xml");
         } catch (FileNotFoundException e) {
-            // do nothing
+        // do nothing
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "There are errors in the xml-data file. Please correct them (or remove the file):\n"
-                    + e.getMessage(), "Errors in xml-file", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getRootPane(), "There are errors in the xml-data file. Please correct them (or remove the file):\n" + e.getMessage(), "Errors in xml-file", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         } finally {
             if (activityStore == null) {
@@ -109,32 +115,41 @@ public class Frame extends javax.swing.JFrame {
 
             }
         });
-        
+
         ButtonGroup group = new ButtonGroup();
 
         sortByDateMenuItem = new JRadioButtonMenuItem("Sort by date");
         group.add(sortByDateMenuItem);
-        sortByDateMenuItem.setSelected(ActivityStore.createDateComparator().getType().equals(
-                activityStore.getSortComparator().getType()));
+        sortByDateMenuItem.setSelected(activityStore.getSortComparator().getType().equals("date"));
         sortByDateMenuItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                activityStore.sortActivites(ActivityStore.createDateComparator());
+                activityStore.sortActivites(ActivityStore.getSortComparatorFactory().createSortComparator("date"));
             }
         });
         sortMenu.add(sortByDateMenuItem);
 
         sortBySubjectMenuItem = new JRadioButtonMenuItem("Sort by subject");
         group.add(sortBySubjectMenuItem);
-        sortBySubjectMenuItem.setSelected(ActivityStore.createSubjectComparator().getType().equals(
-                activityStore.getSortComparator().getType()));
+        sortBySubjectMenuItem.setSelected(activityStore.getSortComparator().getType().equals("subject"));
         sortBySubjectMenuItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                activityStore.sortActivites(ActivityStore.createSubjectComparator());
+                activityStore.sortActivites(ActivityStore.getSortComparatorFactory().createSortComparator("subject"));
             }
         });
         sortMenu.add(sortBySubjectMenuItem);
+        
+        sortByColorMenuItem = new JRadioButtonMenuItem("Sort by color");
+        group.add(sortByColorMenuItem);
+        sortByColorMenuItem.setSelected(activityStore.getSortComparator().getType().equals("color"));
+        sortByColorMenuItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                activityStore.sortActivites(ActivityStore.getSortComparatorFactory().createSortComparator("color"));
+            }
+        });
+        sortMenu.add(sortByColorMenuItem);
 
         sortMenu.add(new JPopupMenu.Separator());
 
@@ -151,16 +166,14 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         sortMenu.add(reverseSortMenuItem);
-        
+
         /*JPopupMenu popup = new JPopupMenu();
-        
         Component[] cs = sortMenu.getComponents();
-        
         for (Component c : cs)
-            popup.add(c);
+        popup.add(c);
         popup.validate();*/
         diagramPanel.setPopupMenu(sortMenu.getPopupMenu());
-        
+
     }
 
     /** This method is called from within the constructor to
@@ -185,6 +198,7 @@ public class Frame extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Anot");
         setMinimumSize(new java.awt.Dimension(610, 480));
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
@@ -245,8 +259,8 @@ public class Frame extends javax.swing.JFrame {
     private javax.swing.JTabbedPane tabbedPane;
     private anot.ViewTabPanel viewTabPanel;
     // End of variables declaration//GEN-END:variables
-
     private JCheckBoxMenuItem reverseSortMenuItem;
     private JRadioButtonMenuItem sortByDateMenuItem;
     private JRadioButtonMenuItem sortBySubjectMenuItem;
+    private JRadioButtonMenuItem sortByColorMenuItem;
 }

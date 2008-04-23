@@ -31,9 +31,9 @@ public class AddTabPanel extends TabPanel {
                     String description = descriptionTextArea.getText().trim();
 
                     //if title or subject or description = empty
-                    if (title.isEmpty() ||subject.isEmpty() || description.isEmpty()) {
+                    if (title.isEmpty() || subject.isEmpty() || description.isEmpty()) {
                         //error
-                        JOptionPane.showMessageDialog(null, "Please fill out all fields.",
+                        JOptionPane.showMessageDialog(getRootPane(), "Please fill out all fields.",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -44,7 +44,7 @@ public class AddTabPanel extends TabPanel {
                             timeTextField.getText().trim());
 
                     if (Calendar.getInstance().getTime().after(date)) {
-                        JOptionPane.showMessageDialog(null, "Activity must be in the future.",
+                        JOptionPane.showMessageDialog(getRootPane(), "Activity must be in the future.",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -59,8 +59,8 @@ public class AddTabPanel extends TabPanel {
                     getActivityStore().setSelectedActivity(a);
 
                 } catch (ParseException ex) {
-                    JOptionPane.showMessageDialog(null, "Please format date as (yyyy-mm-dd) and time as (hh:mm).",
-                                "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(getRootPane(), "Please format date as (yyyy-mm-dd) and time as (hh:mm).",
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -80,12 +80,12 @@ public class AddTabPanel extends TabPanel {
 
             }
         });
-        
+
         colorChooserButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 Activity a = getActivityStore().getSelectedActivity();
-                color = JColorChooser.showDialog(null, "Chose Activity Color",
+                color = JColorChooser.showDialog(getRootPane(), "Chose Activity Color",
                         color);
                 colorLabel.repaint();
             }

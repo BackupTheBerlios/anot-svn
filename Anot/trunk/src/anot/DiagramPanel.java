@@ -21,8 +21,6 @@ public class DiagramPanel extends JPanel implements MouseListener,
     ActivityStore activityStore;
     //...where instance variables are declared:
     JPopupMenu popup;
-    int x = -1;
-    int y = -1;
     private int stapleWidth = 35;
     private int stapleStart = 40;
     private int stapleNewPos = 40;
@@ -124,9 +122,10 @@ public class DiagramPanel extends JPanel implements MouseListener,
 
         Color color = Color.white;
 
+        // when there are no activities
         if (activityStore.getSize() == 0) {
             g.setColor(Color.gray);
-            String s = "Please add activities from below.";
+            String s = "Please add activities using the form below.";
             int w = g.getFontMetrics(font).stringWidth(s);
             g.drawString(s, getWidth() / 2 - w / 2, getHeight() / 2);
             return;
@@ -141,12 +140,7 @@ public class DiagramPanel extends JPanel implements MouseListener,
         g.setColor(Color.gray);
         g.drawLine(10, 10, 10, getHeight() - 10);
 
-        /*if ((int) nDays % 3 == 0) {
-        System.out.println("llama");
-        drawGrade(g, "" + (int) (nDays - nDays / 3), (int) (nDays - nDays / 3), pixelsPerDay);
-        drawGrade(g, "" + (int) (nDays / 2), (int) (nDays / 2), pixelsPerDay);
-        drawGrade(g, "" + (int) (nDays / 3), (int) (nDays / 3), pixelsPerDay);
-        } else*/
+        // draw grade on the left
         drawGrade(g, "" + (int) (nDays), (int) (nDays), pixelsPerDay);
         if (nDays > 3) {
             drawGrade(g, "" + (int) (nDays - nDays / 4), (int) (nDays - nDays / 4), pixelsPerDay);
@@ -171,7 +165,7 @@ public class DiagramPanel extends JPanel implements MouseListener,
 
             //System.out.println(p + " :::: " + h);
 
-            //g.fillRect(p * 40 + 10, getHeight() - 10 - (int) h * 10, 35, (int) h * 10);
+            // calculate color for staple
             if (activityStore.getSelectedActivity() == a) {
                 Color ac = a.getColor();
                 Color c = new Color(Math.min(255, ac.getRed() + 40),
@@ -181,16 +175,21 @@ public class DiagramPanel extends JPanel implements MouseListener,
             } else {
                 g.setColor(a.getColor());
             }
+            
+            // draw staple
             g.fillRect(p * stapleNewPos + stapleStart, getHeight() - h - 1, stapleWidth, h);
 
+            // draw lines in staple
             g.setColor(Color.gray);
-            for (double line = 0; line <= h; line += pixelsPerDay) {
+            /*int skip = (int)(nDays*10/getHeight())+1;
+            for (double line = 0; line <= h; line += pixelsPerDay*skip) {
                 g.drawLine(p * stapleNewPos + stapleStart,
                         (int) Math.floor(getHeight() - line),
                         p * stapleNewPos + stapleStart - 1 + stapleWidth,
                         (int) Math.floor(getHeight() - line));
-            }
+            }*/
 
+            // draw remaining days above staple
             double remainingDays = (a.getDate().getTime() - nowTime) / (double) (1000 * 60 * 60 * 24);
             String s;
             if (remainingDays < 1.0) {
@@ -203,10 +202,6 @@ public class DiagramPanel extends JPanel implements MouseListener,
 
             p++;
         }
-
-    //g.setColor(Color.orange);
-    //g.drawLine(x, 0, x, getHeight());
-    //g.drawLine(0, y, getWidth(), y);
     }
 
     public void drawGrade(Graphics g, String s, int days, double pixelsPerDay) {
@@ -217,7 +212,7 @@ public class DiagramPanel extends JPanel implements MouseListener,
     }
 
     public void mouseClicked(MouseEvent e) {
-        x = e.getX();
+        int x = e.getX();
 
         //FIXME: this is not beautiful
         for (int p = 0; p < activityStore.getSize(); p++) {
@@ -257,8 +252,6 @@ public class DiagramPanel extends JPanel implements MouseListener,
     }
 
     public void mouseMoved(MouseEvent e) {
-    //y = e.getY();
-    //x = e.getX();
-    //repaint();
+        
     }
 }

@@ -106,11 +106,7 @@ public class ActivityStoreBuilder {
             as.setReverseSort(reverse);
 
             // should be some type of factory with prototypes and such
-            if (type.equals("date")) {
-                as.sortActivites(ActivityStore.createDateComparator());
-            } else if (type.equals("subject")) {
-                as.sortActivites(ActivityStore.createSubjectComparator());
-            }
+            as.sortActivites(ActivityStore.getSortComparatorFactory().createSortComparator(type));
         }
         nodes = document.getElementsByTagName("activity");
         for (int i = 0; i < nodes.getLength(); i++) {

@@ -2,6 +2,7 @@
  */
 package anot;
 
+import java.awt.Color;
 import java.awt.event.*;
 import java.util.*;
 
@@ -11,6 +12,11 @@ import java.util.*;
  */
 public class ActivityStore {
 
+    protected static SortComparatorFactory scfactory = new SortComparatorFactory();
+
+    public static SortComparatorFactory getSortComparatorFactory() {
+        return scfactory;
+    }
     String filename;
     LinkedList<Activity> activities;
     Activity selectedActivity;
@@ -25,7 +31,7 @@ public class ActivityStore {
         selectedActivity = null;
         listeners = new LinkedList<ActionListener>();
         selectionListeners = new LinkedList<ActionListener>();
-        sortComparator = createDateComparator();
+        sortComparator = scfactory.createSortComparator("date");
     }
 
     protected void notifyListeners() {
@@ -164,39 +170,117 @@ public class ActivityStore {
         return sb.toString();
     }
 
-    public static SortComparator createDateComparator() {
-        return new SortComparator() {
+    public static abstract class SortComparator implements Comparator<Activity> {
 
-            public int compare(Activity o1, Activity o2) {
+        public abstract String getType();
+
+        @Override
+        public abstract SortComparator clone();
+    }
+
+    public static class SortComparatorFactory {
+
+        LinkedList<SortComparator> scs;
+
+        public SortComparatorFactory() {
+            scs = new LinkedList<SortComparator>();
+            scs.add(new DateSortComparator());
+            scs.add(new SubjectSortComparator());
+            scs.add(new ColorSortComparator());
+        }
+
+        public void addSortComparator(SortComparator sc) {
+            scs.add(sc);
+        }
+
+        public SortComparator createSortComparator(String type) {
+            for (SortComparator sc : scs) {
+                if (sc.getType().equals(type)) {
+                    return sc.clone();
+                }
+            }
+            System.err.println("No such SortComparator: " + type);
+            return scs.getFirst();
+        }
+    }
+
+    private static class SubjectSortComparator extends SortComparator {
+
+        public int compare(Activity o1, Activity o2) {
+            int ret = o1.getSubject().compareTo(o2.getSubject());
+            if (ret == 0) {
                 return o1.getDate().compareTo(o2.getDate());
             }
+            return ret;
+        }
 
-            @Override
-            public String getType() {
-                return "date";
-            }
-        };
+        @Override
+        public String getType() {
+            return "subject";
+        }
+
+        @Override
+        public SortComparator clone() {
+            return new SubjectSortComparator();
+        }
     }
 
-    public static SortComparator createSubjectComparator() {
-        return new SortComparator() {
+    private static class DateSortComparator extends SortComparator {
 
-            public int compare(Activity o1, Activity o2) {
-                int ret = o1.getSubject().compareTo(o2.getSubject());
-                if (ret == 0) {
-                    return o1.getDate().compareTo(o2.getDate());
-                }
-                return ret;
-            }
+        public int compare(Activity o1, Activity o2) {
+            return o1.getDate().compareTo(o2.getDate());
+        }
 
-            @Override
-            public String getType() {
-                return "subject";
-            }
-        };
+        @Override
+        public String getType() {
+            return "date";
+        }
+
+        @Override
+        public SortComparator clone() {
+            return new DateSortComparator();
+        }
     }
-    
-    public static abstract class SortComparator implements Comparator<Activity> {
-        public abstract String getType();
+
+    private static class ColorSortComparator extends SortComparator {
+
+        public int compare(Activity o1, Activity o2) {
+            Color c1 = o1.getColor();
+            float[] hsb1 = Color.RGBtoHSB(c1.getRed(), c1.getGreen(), c1.getBlue(), null);
+            Color c2 = o2.getColor();
+            float[] hsb2 = Color.RGBtoHSB(c2.getRed(), c2.getGreen(), c2.getBlue(), null);
+            // for hue
+            if (hsb1[0] == hsb2[0]) {
+                // for saturation
+                if (hsb1[1] == hsb2[1]) {
+                    // for brightness
+                    if (hsb1[2] == hsb2[2]) {
+                        return 0;
+                    } else if (hsb1[2] < hsb2[2]) {
+                        return -1;
+                    } else {
+                        return 1;
+                    } // end brightness
+                } else if (hsb1[1] < hsb2[1]) {
+                    return -1;
+                } else {
+                    return 1;
+                } // end saturation
+            } else if (hsb1[0] < hsb2[0]) {
+                return -1;
+            } else {
+                return 1;
+            } // end hue
+        }
+
+        @Override
+        public String getType() {
+            return "color";
+        }
+
+        @Override
+        public SortComparator clone() {
+            return new ColorSortComparator();
+        }
     }
 }
