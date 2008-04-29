@@ -5,9 +5,9 @@
  */
 package anot;
 
-import java.awt.Component;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
+import java.util.Random;
 import javax.swing.*;
 
 /**
@@ -39,6 +39,41 @@ public class Frame extends javax.swing.JFrame {
         });
     }
     protected ActivityStore activityStore;
+    public static final String[] helpStrings = {
+        "Jedi says: You don't need any help...",
+        "You must be kidding me...",
+        "Idiot!",
+        "Suck my balls!",
+        "Kartoffelnauflauf!!!",
+        "Google macht frei.",
+        "Just get a clue!",
+        "Life is just." ,
+        "There are no stupid questions, only stupid people." ,
+        "How to make a million dollars: First, get a million dollars." ,
+        
+        "It's hard to get the big picture\nwhen you have such a small screen." ,
+        "Q: How does Bill Gates screw in a lightbulb?\nA: He doesn't. He declares darkness the industry standard." ,
+        
+        "\"Shit happens. Sometimes.\"" ,
+        "\"There is no spoon.\"" ,
+        "\"Arnold: Hasta la vista baby.\"" ,
+        "\"Arnold: Come with me if you want to live.\"" ,
+        "\"Arnold: I'll be back.\"" ,
+        "\"I've got to return some tapes.\"" ,
+        "\"Use the force Luke!\"" ,
+        
+        "\"It matters not whether you win the game. Only if you've bought it.\"" ,
+        "\"Hello, it's a me Maario!\"" ,
+        "\"You're like an army of two!\"" ,
+        "\"All your base are belong to us.\"" ,
+        "\"CHA-CHING \'blam blam blam\'\"" ,
+        "\"Achknowledged.\"" ,
+        "\"Gotta catch 'em all\"" ,
+        "\"Mmmmmoooonster kill\"" ,
+                
+        "Vill du ha hjälp? Ring Poolia." 
+        
+    };
 
     /** Creates new form Frame */
     public Frame() {
@@ -55,20 +90,25 @@ public class Frame extends javax.swing.JFrame {
         aboutMenuItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                //TODO: Pop-Up Description about the program.
-
                 JOptionPane.showMessageDialog(getRootPane(),
-                        "Created by:\nshazmodan & tgwizard", "About",
+                        "Created by:\n" + "" +
+                        "shazmodan <shazmodan@gmail.com>\n" +
+                        "tgwizard <tgwizard@gmail.com>", "About",
                         JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
         helpMenuItem.addActionListener(new ActionListener() {
-
+            Random rand = new Random(System.currentTimeMillis());
+            int lastIndex = -1;
             public void actionPerformed(ActionEvent e) {
-                //TODO: Pop-Up help!! YEAH!
+                int nextIndex = 0;
+                do {
+                    nextIndex = rand.nextInt(helpStrings.length);
+                } while (nextIndex == lastIndex);
+                lastIndex = nextIndex;
                 JOptionPane.showMessageDialog(getRootPane(),
-                        "Jedi says: You don't need any help...", "Help",
+                        helpStrings[nextIndex], "Help (No. " + (nextIndex+1) + ")",
                         JOptionPane.INFORMATION_MESSAGE);
             }
         });
